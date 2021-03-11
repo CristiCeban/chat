@@ -18,7 +18,7 @@ if (cluster.isMaster) {
     //     res.send(`Hello from ${process.pid}`)
     // })
 
-    for (let i = 0; i < numCPUs; i++) {
+    for (let i = 0; i < numCPUs - 1; i++) {
         cluster.fork();
     }
 
@@ -29,9 +29,10 @@ if (cluster.isMaster) {
 } else {
     console.log(`Worker ${process.pid} started`);
 
-    const app = express()
-    const server = http.Server(app);
-    server.listen(3001);
+    // const app = express()
+    // const server = http.Server(app);
+    const server = http.createServer()
+    server.listen(3000);
     const io = new Server(server, {
         cors: {
             origin: true,
