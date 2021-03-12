@@ -5,18 +5,67 @@ const redisAdapter = require("socket.io-redis");
 const numCPUs = require("os").cpus().length;
 const {setupMaster, setupWorker} = require("@socket.io/sticky");
 const express = require("express")
+const mongoose = require('mongoose')
+const {Types} = require('mongoose')
+const cors = require('cors')
+const config = require('config')
+
+const apiPort = config.get('apiPort') || 3000
+const wsPort = config.get('wsPort') || 3001
+
+const startWorker = async () => {
+    console.log(`Worker ${process.pid} started`);
+
+    try {
+
+        await mongoose.connect(config.get('mongoUrl'),{
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
+        })
+
+        const app = express()
+        app.use(express.json({extended: true}))
+        app.use(cors())
+
+        app.use('/api/auth', require('./routes/auth.routes'))
+        app.get('/',(req,res)=>{
+            console.log('connected')
+            res.send('Connected')
+        })
+
+        const server = http.createServer(app);
+        const io = new Server(server, {
+            cors: {
+                origin: true,
+                methods: ["GET", "POST"],
+                credentials: true
+            }
+        });
+
+        io.adapter(redisAdapter({host: "localhost", port: 6379}));
+        setupWorker(io);
+
+        io.on("connection", (socket: any) => {
+            console.log(`connection to ${process.pid}`);
+            socket.emit('hello', {procces_pid: process.pid})
+        });
+    } catch (e) {
+        console.log(`server error with process ${process.pid}`)
+        console.log(e.message)
+        process.exit(1)
+    }
+
+}
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
 
-    const app = express()
-    setupMaster(app, {
-        loadBalancingMethod: "random", // either "random", "round-robin" or "least-connection"
+    const server = http.createServer()
+    setupMaster(server, {
+        loadBalancingMethod: "round-robin", // either "random", "round-robin" or "least-connection"
     });
-    // app.listen(3000);
-    // app.get('/', (req, res) => {
-    //     res.send(`Hello from ${process.pid}`)
-    // })
+    server.listen(apiPort);
 
     for (let i = 0; i < numCPUs - 1; i++) {
         cluster.fork();
@@ -27,29 +76,5 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 } else {
-    console.log(`Worker ${process.pid} started`);
-
-    // const app = express()
-    // const server = http.Server(app);
-    const server = http.createServer()
-    server.listen(3000);
-    const io = new Server(server, {
-        cors: {
-            origin: true,
-            methods: ["GET", "POST"],
-            credentials: true
-        }
-    });
-
-    io.adapter(redisAdapter({host: "localhost", port: 6379}));
-    setupWorker(io);
-
-    // app.get('/ws', (req, res) => {
-    //     res.send(`Hello from ${process.pid}`)
-    // })
-
-    io.on("connection", (socket: any) => {
-        console.log(`connection to ${process.pid}`);
-        socket.emit('hello',{procces_pid: process.pid})
-    });
+    startWorker()
 }

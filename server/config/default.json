@@ -1,0 +1,7 @@
+{
+  "apiPort": 3000,
+  "wsPort" : 3001,
+  "bcryptSalt" : 12,
+  "jwtSecret": "secret jwt",
+  "mongoUrl": "mongodb+srv://CristiTest:SuperSecurePassword123@chat.ldchx.mongodb.net/chat?retryWrites=true&w=majority"
+}

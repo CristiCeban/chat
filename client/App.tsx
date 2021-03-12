@@ -21,7 +21,7 @@ export default function App() {
                     <Root>
                         <Host>
                             <Navigation/>
-                            <StatusBar style={'dark'}/>
+                            <StatusBar style={'light'}/>
                         </Host>
                     </Root>
                 </SafeAreaProvider>
