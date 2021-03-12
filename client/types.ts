@@ -12,3 +12,7 @@ export type ScreenStackParamList = {
     Screen1: undefined,
     Screen2: undefined,
 }
+
+export type ChatStackParamList = {
+    ChatList: undefined
+}

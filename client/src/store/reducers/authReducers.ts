@@ -20,12 +20,17 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
         case "AUTH/ON_LOGIN":
             return {
                 ...state,
-                token: action.payload,
+                token: action.payload.token,
             }
         case "AUTH/LOGOUT":
             return {
                 ...state,
                 token: undefined,
+            }
+        case "AUTH/SET_TOKEN":
+            return {
+                ...state,
+                token: action.payload
             }
         default:
             return state

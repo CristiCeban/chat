@@ -1,16 +1,15 @@
 import React from "react";
 import {createStackNavigator} from "@react-navigation/stack";
-import LoginScreen from "../screens/Auth/Login/LoginScreen";
-import {AuthStackParamList} from "../../types";
+import {ChatStackParamList} from "../../types";
 import Colors from "../constants/Colors";
+import Screen1 from "../screens/Screen1";
 
+const Stack = createStackNavigator<ChatStackParamList>()
 
-const Stack = createStackNavigator<AuthStackParamList>();
-
-const AuthStackNavigator = () => {
-    return (
+const ChatStackNavigator = () =>{
+    return(
         <Stack.Navigator
-            initialRouteName={'Login'}
+            initialRouteName={'ChatList'}
             screenOptions={{
                 headerTintColor: Colors.dark1,
                 headerStyle: {
@@ -22,12 +21,11 @@ const AuthStackNavigator = () => {
             }}
         >
             <Stack.Screen
-                name={'Login'}
-                component={LoginScreen}
-            />
-
+                name={'ChatList'}
+                component={Screen1}
+                />
         </Stack.Navigator>
     )
 }
 
-export default AuthStackNavigator
+export default ChatStackNavigator

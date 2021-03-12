@@ -17,20 +17,27 @@ export interface IAuthLogout {
     payload: undefined,
 }
 
+export interface ISetToken {
+    readonly type : 'AUTH/SET_TOKEN',
+    payload : string | undefined,
+}
+
 export type AuthAction =
     | IAuthLoginAction
     | IAuthSetLoading
     | IAuthLogout
+    | ISetToken
 
 
 export const authLoginAction = (body: any) => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try {
             dispatch({type: 'AUTH/SET_LOADING', payload: true})
-            const response = await ApiService.post('auth', body)
-            const {token} = response.data
+            const response = await ApiService.post('auth/login', body)
+            //because of interceptors used in apiServices.
+            const {token} = (response as any)
             await AuthStorage.setToken(token)
-            console.log(response)
+            dispatch({type:'AUTH/ON_LOGIN',payload:response})
         } catch (e) {
             console.warn(e)
         } finally {
@@ -43,12 +50,21 @@ export const onLogoutAction = () => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try{
             await AuthStorage.removeToken()
+            dispatch({type:'AUTH/LOGOUT',payload:undefined})
         }
         catch (e) {
             console.warn(e)
         }
-        finally {
-            dispatch({type:'AUTH/LOGOUT',payload:undefined})
+    }
+}
+
+export const setTokenAction = (token : string) => {
+    return async (dispatch: Dispatch<AuthAction>) => {
+        try{
+            dispatch({type:'AUTH/SET_TOKEN',payload:token})
+        }
+        catch (e) {
+            console.warn(e)
         }
     }
 }
