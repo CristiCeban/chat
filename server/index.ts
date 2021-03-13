@@ -6,12 +6,9 @@ const numCPUs = require("os").cpus().length;
 const {setupMaster, setupWorker} = require("@socket.io/sticky");
 const express = require("express")
 const mongoose = require('mongoose')
-const {Types} = require('mongoose')
 const cors = require('cors')
 const config = require('config')
-
 const apiPort = config.get('apiPort') || 3000
-const wsPort = config.get('wsPort') || 3001
 
 const startWorker = async () => {
     console.log(`Worker ${process.pid} started`);

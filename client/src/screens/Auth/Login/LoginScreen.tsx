@@ -1,14 +1,16 @@
 import React, {useRef} from "react";
-import {View, Text, ActivityIndicator, TextInput, TouchableOpacity} from "react-native";
-import {useDispatch,useSelector} from "react-redux";
+import {View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert} from "react-native";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from "formik";
 import * as yup from 'yup';
-import {styles} from "./styles";
 import {FontAwesome5} from '@expo/vector-icons';
+import * as Facebook from 'expo-facebook';
+import {styles} from "./styles";
 import Colors from "../../../constants/Colors";
-import {authLoginAction} from "../../../store/actions/authActions";
+import {authLoginAction, onFacebookLogin, onGoogleLogin} from "../../../store/actions/authActions";
 import {ApplicationState} from "../../../store";
+import * as Google from 'expo-google-app-auth';
 
 
 const validationSchema = yup.object().shape({
@@ -21,7 +23,7 @@ const validationSchema = yup.object().shape({
 
 const LoginScreen = () => {
     const dispatch = useDispatch()
-    const {isLoading} = useSelector((state:ApplicationState)=>state.authReducer)
+    const {isLoading} = useSelector((state: ApplicationState) => state.authReducer)
     const navigation = useNavigation()
     const formikRef = useRef<any>(null)
 
@@ -32,6 +34,39 @@ const LoginScreen = () => {
     const initFormValue = {
         email: '',
         password: '',
+    }
+
+    const onFacebook = async () => {
+        try {
+            await Facebook.initializeAsync({appId: '853523668839746', appName: 'chat'})
+            const {token, type} = await Facebook.logInWithReadPermissionsAsync({
+                    permissions: ['public_profile', 'email']
+                },
+            );
+            if (type === 'success') {
+                console.log(token)
+                dispatch(onFacebookLogin(token))
+            }
+        } catch (e) {
+            console.warn(e)
+            alert(`Facebook Login Error: ${e.message}`);
+        }
+    }
+
+    const onGoogle = async () => {
+        try {
+            const {type, accessToken, user} = await Google.logInAsync({
+                androidClientId: '861519663334-rc4ta1tvoi3voep835n0m2sofkcmqjl3.apps.googleusercontent.com',
+                iosClientId: '861519663334-ekns07bj4dpad21pd31ob6dadhj2md44.apps.googleusercontent.com',
+                scopes: ['profile', 'email'],
+            });
+            if(type==='success')
+                dispatch(onGoogleLogin(accessToken, user))
+                // console.log(user)
+        } catch (e) {
+            console.warn(e)
+            alert(`Google Login Error: ${e.message}`);
+        }
     }
 
     return (
@@ -46,7 +81,6 @@ const LoginScreen = () => {
                       values,
                       handleChange,
                       handleSubmit,
-                      isSubmitting,
                       handleBlur,
                       touched,
                       errors
@@ -87,17 +121,18 @@ const LoginScreen = () => {
                                 <Text style={styles.textError}>{errors.password}</Text> : null}
                         </View>
 
-                        <TouchableOpacity style={styles.buttonContainer} disabled={isSubmitting || isLoading}
+                        <TouchableOpacity style={styles.buttonContainer} disabled={isLoading}
                                           onPress={() => handleSubmit()}>
-                            {isSubmitting || isLoading ?
+                            {isLoading ?
                                 <View style={styles.center}>
                                     <ActivityIndicator color={Colors.marinBlue} size={'large'}/>
                                 </View> :
                                 <Text style={styles.textWhite}>Login</Text>
                             }
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.facebookContainer} disabled={isSubmitting || isLoading}>
-                            {isSubmitting || isLoading ?
+                        <TouchableOpacity style={styles.facebookContainer} onPress={onFacebook}
+                                          disabled={isLoading}>
+                            {isLoading ?
                                 <View style={styles.center}>
                                     <ActivityIndicator color={Colors.marinBlue} size={'large'}/>
                                 </View>
@@ -109,8 +144,9 @@ const LoginScreen = () => {
                             }
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.googleContainer} disabled={isSubmitting || isLoading}>
-                            {isSubmitting  || isLoading?
+                        <TouchableOpacity style={styles.googleContainer} disabled={isLoading}
+                                          onPress={onGoogle}>
+                            {isLoading ?
                                 <View style={styles.center}>
                                     <ActivityIndicator color={Colors.marinBlue} size={'large'}/>
                                 </View>

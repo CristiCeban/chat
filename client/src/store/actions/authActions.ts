@@ -1,6 +1,7 @@
 import {Dispatch} from "react";
 import AuthStorage from "../../services/auth-storage";
 import ApiService from "../../services/api"
+import {User} from "../../models/user";
 
 export interface IAuthSetLoading {
     readonly type: 'AUTH/SET_LOADING',
@@ -9,7 +10,10 @@ export interface IAuthSetLoading {
 
 export interface IAuthLoginAction {
     readonly type: 'AUTH/ON_LOGIN',
-    payload: any,
+    payload: {
+        token : string,
+        user : User
+    },
 }
 
 export interface IAuthLogout {
@@ -37,7 +41,7 @@ export const authLoginAction = (body: any) => {
             //because of interceptors used in apiServices.
             const {token} = (response as any)
             await AuthStorage.setToken(token)
-            dispatch({type:'AUTH/ON_LOGIN',payload:response})
+            dispatch({type:'AUTH/ON_LOGIN',payload:(response as any)})
         } catch (e) {
             console.warn(e)
         } finally {
@@ -65,6 +69,43 @@ export const setTokenAction = (token : string) => {
         }
         catch (e) {
             console.warn(e)
+        }
+    }
+}
+
+export const onFacebookLogin = (facebook_token : string) => {
+    return async (dispatch : Dispatch<AuthAction>) =>{
+        try{
+            dispatch({type: 'AUTH/SET_LOADING', payload: true})
+            const response = await ApiService.post('auth/facebook',{token:facebook_token})
+            const {token} = (response as any)
+            await AuthStorage.setToken(token)
+            dispatch({type:'AUTH/ON_LOGIN',payload:(response as any)})
+        }
+        catch (e) {
+            console.warn(e)
+        }
+        finally {
+            dispatch({type: 'AUTH/SET_LOADING', payload: false})
+
+        }
+    }
+}
+
+export const onGoogleLogin = (google_token:string,user:Object) => {
+    return async (dispatch:Dispatch<AuthAction>) =>{
+        try{
+            dispatch({type: 'AUTH/SET_LOADING', payload: true})
+            const response = await ApiService.post('auth/google',{token:google_token,user})
+            const {token} = (response as any)
+            await AuthStorage.setToken(token)
+            dispatch({type:'AUTH/ON_LOGIN',payload:(response as any)})
+        }
+        catch (e) {
+            console.warn(e)
+        }
+        finally {
+            dispatch({type: 'AUTH/SET_LOADING', payload: false})
         }
     }
 }

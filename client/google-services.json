@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "861519663334",
+    "project_id": "chat-5205b",
+    "storage_bucket": "chat-5205b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:861519663334:android:a58d70ea11b31e8a8d6b27",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "861519663334-rc4ta1tvoi3voep835n0m2sofkcmqjl3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "host.exp.exponent",
+            "certificate_hash": "966cdb1a378a68fab61258be56229cd4fe9bf573"
+          }
+        },
+        {
+          "client_id": "861519663334-veb6p4rbka8m74ejkrdh122qkvmp0i1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlmwLStYRZJLGOPdt6K8NoJy4pcH8PRtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "861519663334-veb6p4rbka8m74ejkrdh122qkvmp0i1l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "861519663334-ekns07bj4dpad21pd31ob6dadhj2md44.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.epiccristi.client"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

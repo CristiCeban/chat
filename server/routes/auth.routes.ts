@@ -1,9 +1,9 @@
 import {Router} from "express"
 import config from 'config'
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 import {check, validationResult} from 'express-validator'
-
+import axios from 'axios'
+import Utils from '../utils/Utils'
 const User = require('../models/User')
 
 const router = Router()
@@ -13,8 +13,8 @@ router.post(
     '/register',
     [
         check('email', 'Incorrect email').isEmail(),
-        check('name', 'Name is required').exists(),
-        check('surname', 'Surname is required').exists(),
+        check('first_name', 'First name is required').exists(),
+        check('last_name', 'Last name is required').exists(),
         check('password', 'Password should be at least 6 char')
             .isLength({min: 6})
     ],
@@ -29,7 +29,7 @@ router.post(
                 })
             }
 
-            const {email, password, name, surname} = req.body
+            const {email, password, first_name, last_name} = req.body
 
             const candidate = await User.findOne({email})
 
@@ -44,12 +44,9 @@ router.post(
                     ]
                 })
 
+            const hashedPassword = await Utils.createPassword(password)
 
-            const hashedPassword = await bcrypt.hash(password, config.get('bcryptSalt'))
-
-            console.log(hashedPassword)
-
-            const user = new User({email, password: hashedPassword, name, surname})
+            const user = new User({email, password: hashedPassword, first_name, last_name})
 
             await user.save()
 
@@ -58,6 +55,8 @@ router.post(
             res.status(500).json({message: 'Server error'})
         }
     })
+
+// /api/auth/login
 
 router.post(
     '/login',
@@ -84,21 +83,82 @@ router.post(
                 return res.status(400).json({message: "User with this email didn't exist"})
             }
 
-            const isMatch = await bcrypt.compare(password, user.password)
+            const isMatch = await Utils.checkPassword(password,user.password)
 
             if (!isMatch) {
                 return res.status(400).json({message: 'Invalid password,try again'})
             }
 
-            const token = jwt.sign(
-                {userId: user.id},
-                config.get('jwtSecret'),
-                {expiresIn: '24h'}
-            )
+            const token = Utils.createToken(user.id)
 
             return res.json({token, user})
 
         } catch (e) {
+            res.status(500).json({message: 'Server error'})
+        }
+    }
+)
+
+// /api/auth/facebook
+
+router.post(
+    '/facebook',
+    async (req,res) => {
+        try{
+            const {token} = req.body;
+
+            const fetchedUser = await axios.get(`https://graph.facebook.com/v10.0/me?transport=cors&access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
+            console.log(fetchedUser.data)
+            const {first_name,last_name,email,picture} = fetchedUser.data
+            const user = await User.findOne({email})
+
+            //create user
+            if(!user){
+                //TODO add image download handler for user with image on facebook
+
+                // await Utils.downloadImage(picture.data.url,'asa2.jpg')
+                const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
+                const newUser = new User({email,first_name,last_name,password:hashedPassword})
+                await newUser.save()
+                const newUserFound = await User.findOne({email})
+                const token = Utils.createToken(newUserFound.id)
+                res.status(201).json({token,newUserFound})
+            }
+            //if user exist
+            else{
+                const token =  Utils.createToken(user.id)
+                res.json({token,user})
+            }
+        }
+        catch (e) {
+            res.status(500).json({message: 'Server error'})
+        }
+    }
+)
+
+router.post(
+    '/google',
+    async (req,res) => {
+        try{
+            const {token,user} = req.body;
+            const {email,familyName,givenName,photoUrl} = user
+            const isRegUser = await User.findOne({email})
+            // if user is not registered already
+            if(!isRegUser){
+                const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
+                const newUser = new User({email,first_name:givenName,last_name:familyName,password:hashedPassword})
+                await newUser.save()
+                const newUserFound = await User.findOne({email})
+                const token = Utils.createToken(newUserFound.id)
+                res.status(201).json({token,newUserFound})
+            }
+            // if user is already registered
+            else{
+                const token = Utils.createToken(isRegUser.id)
+                res.json({token,isRegUser})
+            }
+        }
+        catch (e) {
             res.status(500).json({message: 'Server error'})
         }
     }

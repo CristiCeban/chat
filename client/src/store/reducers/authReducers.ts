@@ -1,13 +1,23 @@
 import {AuthAction} from "../actions/authActions";
+import {User} from "../../models/user";
 
 type AuthState = {
     isLoading: boolean,
     token: string | undefined,
+    user : User
+}
+
+const defaultUser : User = {
+    _id : '',
+    email : '',
+    first_name : '',
+    last_name : '',
 }
 
 const initialState = {
     isLoading: false,
     token: undefined,
+    user : defaultUser,
 }
 
 const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
@@ -21,11 +31,13 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
             return {
                 ...state,
                 token: action.payload.token,
+                user : action.payload.user,
             }
         case "AUTH/LOGOUT":
             return {
                 ...state,
                 token: undefined,
+                user: undefined,
             }
         case "AUTH/SET_TOKEN":
             return {
