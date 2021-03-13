@@ -26,6 +26,7 @@ const startWorker = async () => {
         app.use(cors())
 
         app.use('/api/auth', require('./routes/auth.routes'))
+        app.use('/api/chat',require('./routes/chat.routes'))
         app.get('/',(req,res)=>{
             console.log('connected')
             res.send('Connected')
