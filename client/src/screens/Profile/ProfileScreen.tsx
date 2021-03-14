@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {View, Text, TouchableOpacity, Image, TextInput, ActivityIndicator} from "react-native";
+import {View, Text, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as ImageManipulator from "expo-image-manipulator";
 import {useNavigation} from '@react-navigation/native';
@@ -42,24 +42,29 @@ const ProfileScreen = () => {
             return;
         }
 
-        const pickerResult = await ImagePicker.launchImageLibraryAsync();
-
+        const pickerResult = await ImagePicker.launchImageLibraryAsync({
+                base64: true
+            }
+        );
 
         if (!pickerResult.cancelled) {
-            const file = await ImageManipulator.manipulateAsync(
-                pickerResult.uri,
-                [{resize: {width: 2000}}],
-                {compress: 1, format: ImageManipulator.SaveFormat.JPEG}
-            );
-            setImage('thumbnail', file);
+            // const file = await ImageManipulator.manipulateAsync(
+            //     pickerResult.uri,
+            //     [{resize: {width: 2000}}],
+            //     {compress: 1, format: ImageManipulator.SaveFormat.JPEG}
+            // );
+            setImage('thumbnail', pickerResult);
             // formikRef.current.handleSubmit()
         }
     }
 
-    const onSubmit = (values: any) => {
-        // console.log(values)
-        dispatch(onEditProfile(values))
+    const onSubmit = async (values: any) => {
+        await dispatch(onEditProfile(values))
+        navigation.goBack()
     }
+
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : 0
+
     return (
         <View style={styles.container}>
             <Formik
@@ -70,9 +75,14 @@ const ProfileScreen = () => {
                 {({
                       values,
                       setFieldValue,
-                      handleSubmit
+                      handleSubmit,
+                      handleBlur,
+                      handleChange,
+                      touched,
+                      errors
                   }) => (
-                    <View style={styles.formikContainer}>
+                    <KeyboardAvoidingView style={styles.formikContainer} behavior='position'
+                                          keyboardVerticalOffset={keyboardVerticalOffset}>
                         <View style={styles.thumbnailContainer}>
                             <TouchableOpacity onPress={() => openImagePickerAsync(setFieldValue)}>
                                 {!values.thumbnail ?
@@ -96,16 +106,30 @@ const ProfileScreen = () => {
                                 <TextInput
                                     placeholder={'First Name'}
                                     value={values.first_name}
+                                    onBlur={handleBlur('first_name')}
+                                    onChangeText={handleChange('first_name')}
                                     style={styles.textInput}
                                 />
+                            </View>
+
+                            <View style={styles.center}>
+                                {touched.first_name && errors.first_name ?
+                                    <Text style={styles.textError}>{errors.first_name}</Text> : null}
                             </View>
 
                             <View style={styles.textInputContainer}>
                                 <TextInput
                                     placeholder={'Last Name'}
                                     value={values.last_name}
+                                    onBlur={handleBlur('last_name')}
+                                    onChangeText={handleChange('last_name')}
                                     style={styles.textInput}
                                 />
+                            </View>
+
+                            <View style={styles.center}>
+                                {touched.last_name && errors.last_name ?
+                                    <Text style={styles.textError}>{errors.last_name}</Text> : null}
                             </View>
                         </View>
 
@@ -117,7 +141,7 @@ const ProfileScreen = () => {
                                 <Text style={styles.textSave}>Save</Text>
                             }
                         </TouchableOpacity>
-                    </View>
+                    </KeyboardAvoidingView>
                 )}
 
             </Formik>

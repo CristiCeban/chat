@@ -67,5 +67,15 @@ export const styles = StyleSheet.create({
     textSave:{
         color:Colors.white1,
         fontSize:26,
+    },
+    center:{
+        display:'flex',
+        marginTop:5,
+        alignItems:'center',
+        justifyContent:'center'
+    },
+    textError:{
+        fontSize:12,
+        color:Colors.red
     }
 })
