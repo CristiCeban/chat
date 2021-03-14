@@ -39,6 +39,7 @@ const LoginScreen = () => {
     const onFacebook = async () => {
         try {
             await Facebook.initializeAsync({appId: '853523668839746', appName: 'chat'})
+            // @ts-ignore
             const {token, type} = await Facebook.logInWithReadPermissionsAsync({
                     permissions: ['public_profile', 'email']
                 },
@@ -55,6 +56,7 @@ const LoginScreen = () => {
 
     const onGoogle = async () => {
         try {
+            // @ts-ignore
             const {type, accessToken, user} = await Google.logInAsync({
                 androidClientId: '861519663334-rc4ta1tvoi3voep835n0m2sofkcmqjl3.apps.googleusercontent.com',
                 iosClientId: '861519663334-ekns07bj4dpad21pd31ob6dadhj2md44.apps.googleusercontent.com',
@@ -62,7 +64,6 @@ const LoginScreen = () => {
             });
             if(type==='success')
                 dispatch(onGoogleLogin(accessToken, user))
-                // console.log(user)
         } catch (e) {
             console.warn(e)
             alert(`Google Login Error: ${e.message}`);

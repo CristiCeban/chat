@@ -6,6 +6,8 @@ const schema = new Schema({
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
     imagePath: {type: String, required: false},
+    isOnline:{type:Boolean},
+    lastOnline:{type:Date}
 })
 
 module.exports = model('User', schema)

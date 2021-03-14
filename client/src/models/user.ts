@@ -3,4 +3,7 @@ export type User = {
     email : string,
     first_name : string,
     last_name : string,
+    imagePath? : string,
+    isOnline? : boolean,
+    lastOnline? :boolean,
 }

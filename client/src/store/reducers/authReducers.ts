@@ -37,12 +37,17 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
             return {
                 ...state,
                 token: undefined,
-                user: undefined,
+                user: defaultUser,
             }
         case "AUTH/SET_TOKEN":
             return {
                 ...state,
                 token: action.payload
+            }
+        case "AUTH/GET_PROFILE":
+            return {
+                ...state,
+                user:action.payload
             }
         default:
             return state

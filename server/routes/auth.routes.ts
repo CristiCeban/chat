@@ -89,9 +89,12 @@ router.post(
                 return res.status(400).json({message: 'Invalid password,try again'})
             }
 
-            const token = Utils.createToken(user.id)
 
-            return res.json({token, user})
+            const newUserFound = await User.findOne({email},{password:0,"__v":0})
+
+            const token = Utils.createToken(newUserFound.id)
+
+            return res.json({token, newUserFound})
 
         } catch (e) {
             res.status(500).json({message: 'Server error'})
@@ -110,7 +113,7 @@ router.post(
             const fetchedUser = await axios.get(`https://graph.facebook.com/v10.0/me?transport=cors&access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
             console.log(fetchedUser.data)
             const {first_name,last_name,email,picture} = fetchedUser.data
-            const user = await User.findOne({email})
+            const user = await User.findOne({email},{password:0,"__v":0})
 
             //create user
             if(!user){
@@ -120,7 +123,7 @@ router.post(
                 const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
                 const newUser = new User({email,first_name,last_name,password:hashedPassword})
                 await newUser.save()
-                const newUserFound = await User.findOne({email})
+                const newUserFound = await User.findOne({email},{password:0,"__v":0})
                 const token = Utils.createToken(newUserFound.id)
                 res.status(201).json({token,newUserFound})
             }
@@ -142,13 +145,13 @@ router.post(
         try{
             const {token,user} = req.body;
             const {email,familyName,givenName,photoUrl} = user
-            const isRegUser = await User.findOne({email})
+            const isRegUser = await User.findOne({email},{password:0,"__v":0})
             // if user is not registered already
             if(!isRegUser){
                 const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
                 const newUser = new User({email,first_name:givenName,last_name:familyName,password:hashedPassword})
                 await newUser.save()
-                const newUserFound = await User.findOne({email})
+                const newUserFound = await User.findOne({email},{password:0,"__v":0})
                 const token = Utils.createToken(newUserFound.id)
                 res.status(201).json({token,newUserFound})
             }

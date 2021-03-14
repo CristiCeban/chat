@@ -33,4 +33,5 @@ export default {
     grey1: '#B5B3Be',
     grey2: '#D3D0Da',
     grey3: '#E0E8F0',
+    profileColors: ['#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5', '#00897b', '#43a047', '#c0ca33', '#fb8c00', '#3e2723']
 };

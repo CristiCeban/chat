@@ -27,6 +27,7 @@ const startWorker = async () => {
 
         app.use('/api/auth', require('./routes/auth.routes'))
         app.use('/api/chat',require('./routes/chat.routes'))
+        app.use('/api/profile',require('./routes/profile.routes'))
         app.get('/',(req,res)=>{
             console.log('connected')
             res.send('Connected')

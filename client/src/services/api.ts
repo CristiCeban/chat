@@ -33,7 +33,6 @@ apiClient.interceptors.response.use(
 export default {
     get(path: string, params: any = {}) {
         return apiClient.get(`/${path}`, {params})
-            .then((response: any) => response.data);
     },
     post(path: string, body: any) {
         return apiClient.post(`/${path}`, body);
