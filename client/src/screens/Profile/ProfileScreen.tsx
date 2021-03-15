@@ -43,7 +43,9 @@ const ProfileScreen = () => {
         }
 
         const pickerResult = await ImagePicker.launchImageLibraryAsync({
-                base64: true
+                base64: true,
+                allowsEditing: true,
+                aspect: [4, 3],
             }
         );
 
@@ -102,6 +104,7 @@ const ProfileScreen = () => {
 
                         <View style={styles.dataContainer}>
                             <Text style={styles.textProfileData}>Profile Data</Text>
+
                             <View style={styles.textInputContainer}>
                                 <TextInput
                                     placeholder={'First Name'}

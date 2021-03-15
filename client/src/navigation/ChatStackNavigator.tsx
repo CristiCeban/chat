@@ -11,6 +11,7 @@ import {ChatStackParamList} from "../../types";
 import {ApplicationState} from "../store";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 import {onLogoutAction} from "../store/actions/authActions";
+import CreateConversationScreen from "../screens/Chat/CreateConversation/CreateConversationScreen";
 
 
 const Stack = createStackNavigator<ChatStackParamList>()
@@ -48,7 +49,7 @@ const ChatStackNavigator = () => {
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <TouchableOpacity style={{marginRight: 20}}>
+                        <TouchableOpacity style={{marginRight: 20}} onPress={()=>navigation.navigate('CreateConversation')}>
                             <FontAwesome5 name={'edit'} size={24} color={'black'}/>
                         </TouchableOpacity>
                     )
@@ -67,6 +68,14 @@ const ChatStackNavigator = () => {
                     )
                 })}
             />
+
+            <Stack.Screen
+                name={'CreateConversation'}
+                component={CreateConversationScreen}
+                options={({navigation}:any)=>({
+                    title: 'Create Conversation',
+                })}
+                />
         </Stack.Navigator>
     )
 }

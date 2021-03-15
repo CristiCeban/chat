@@ -15,5 +15,6 @@ export type ScreenStackParamList = {
 
 export type ChatStackParamList = {
     ChatList: undefined,
-    Profile: undefined
+    Profile: undefined,
+    CreateConversation: undefined,
 }
