@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {View, Text, TouchableOpacity, Dimensions, ActivityIndicator} from "react-native";
+import {View, Text, TouchableOpacity, ActivityIndicator, FlatList} from "react-native";
 import {Feather, Ionicons} from "@expo/vector-icons";
 import {Input} from "native-base";
 import {useDispatch, useSelector} from "react-redux";
 import {styles} from "./styles";
-import {onGetContacts} from "../../../store/actions/newConversationActions";
-import {FlatList} from "react-native-gesture-handler";
+import {onAddUserToNewConversation, onGetContacts} from "../../../store/actions/newConversationActions";
 import {ApplicationState} from "../../../store";
 import Avatar from "../../../components/general/Avatar/Avatar";
+import Colors from "../../../constants/Colors";
+import {ScrollView} from "react-native-gesture-handler";
+import {User} from "../../../models/user";
 
 const CreateConversationScreen = () => {
     const dispatch = useDispatch()
@@ -17,48 +19,57 @@ const CreateConversationScreen = () => {
         nextPageContacts,
         newContactsList,
         inProgressLazyAllContacts,
-        inProgressAllContacts
+        inProgressAllContacts,
+        newUsersToCreateConversation
     } = useSelector((state: ApplicationState) => state.newConversationReducer)
 
     useEffect(() => {
         dispatch(onGetContacts())
     }, [])
 
+    useEffect(() => {
+        dispatch(onGetContacts({search}))
+    }, [search])
+
     const handleRefresh = () => {
         console.log('refresh')
-        dispatch(onGetContacts())
+        dispatch(onGetContacts({search}))
     }
+
 
     const loadMore = () => {
         if (nextPageContacts <= lastPageContacts && !inProgressLazyAllContacts)
-            dispatch(onGetContacts({page: nextPageContacts}, false));
+            dispatch(onGetContacts({page: nextPageContacts, search}, false));
     }
-    console.log(inProgressAllContacts)
+
+    const renderFooter = () => {
+        if (inProgressLazyAllContacts)
+            return <ActivityIndicator size={'large'} style={styles.listFooter} color={Colors.red}/>
+        return null
+    }
+
+    const onPressUser = (user: User) => dispatch(onAddUserToNewConversation(user))
 
     const renderItem = ({item}: any) => {
         return (
-            <TouchableOpacity
-                // onPress={() => dispatch(onAddUserToNewConversation(item))}
-                // style={{width:width}}
-            >
-                <View style={{flexDirection: 'row', minHeight: 70, justifyContent: 'space-between'}} key={item.id}>
-                    <View style={{flexDirection: 'row'}}>
-                        <Avatar width={30} height={30} fontSize={15} profile={{
+            <TouchableOpacity onPress={() => onPressUser(item)}>
+                <View style={styles.flexRowBetween}>
+                    <View style={styles.flexRow}>
+                        <Avatar width={40} height={40} fontSize={20} profile={{
                             name: item.first_name + ' ' + item.last_name,
                             image: item?.imagePath ? item?.imagePath : ''
                         }}/>
-                        {/*<CustomImage uri={item.thumbnail} defaultImage={defaultImageEnum.placeholder} styles={styles.thumbnail}/>*/}
-                        <View style={{marginTop: 20}}>
-                            <Text style={{marginLeft: 10}}>{item.first_name + ' ' + item.last_name}</Text>
+                        <View>
+                            <Text style={styles.textName}>{item.first_name + ' ' + item.last_name}</Text>
                         </View>
                     </View>
-                    <View style={{marginTop: 20, marginRight: 20}}>
-                        {/*{newUsersToCreateConversation.filter(el => el.id === item.id).length ?*/}
-                        {/*    <Feather size={24} name={'check-circle'} color={'#AB1F25'}/>*/}
-                        {/*    :*/}
-                        <Feather size={24} name={'circle'} color={'#AB1F25'}/>
 
-                        {/*}*/}
+                    <View>
+                        {newUsersToCreateConversation.filter(el => el._id === item._id).length ?
+                            <Feather size={24} name={'check-circle'} color={'#AB1F25'}/>
+                            :
+                            <Feather size={24} name={'circle'} color={'#AB1F25'}/>
+                        }
                     </View>
                 </View>
             </TouchableOpacity>
@@ -83,9 +94,30 @@ const CreateConversationScreen = () => {
                 <TouchableOpacity
                     onPress={() => setSearch('')}
                 >
-                    <Ionicons name={'ios-close'} size={28} color={'black'} style={{paddingTop: 0, paddingLeft: 10}}/>
+                    <Ionicons name={'ios-close'} size={28} color={'black'} style={{paddingLeft: 10}}/>
                 </TouchableOpacity>
             </View>
+
+            {newUsersToCreateConversation?.length ?
+                <View style={styles.selectedUserContainer}>
+                    <ScrollView
+                        horizontal={true}
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        {newUsersToCreateConversation.map((user) =>
+                            <TouchableOpacity style={styles.selectedUser} onPress={() => onPressUser(user)}
+                                              key={user._id}>
+                                <Avatar width={60} height={60} fontSize={25} profile={{
+                                    name: user.first_name + ' ' + user.last_name,
+                                    image: user?.imagePath ? user.imagePath : ''
+                                }}/>
+                                <Text style={{marginTop: 5}}>{user.first_name}</Text>
+                            </TouchableOpacity>
+                        )}
+
+                    </ScrollView>
+                </View>
+                : null}
 
             {!newContactsList?.length ?
                 <ActivityIndicator size={'large'} color={'red'}/>
@@ -93,16 +125,16 @@ const CreateConversationScreen = () => {
                 <FlatList
                     data={newContactsList}
                     renderItem={renderItem}
-                    // showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={false}
                     keyExtractor={(item) => item._id.toString()}
-                    // initialNumToRender={10}
-                    refreshing={!inProgressAllContacts}
+                    initialNumToRender={10}
+                    refreshing={inProgressAllContacts}
                     onRefresh={handleRefresh}
                     onEndReached={loadMore}
                     onEndReachedThreshold={0.5}
+                    ListFooterComponent={renderFooter}
                 />
             }
-
         </View>
     )
 }

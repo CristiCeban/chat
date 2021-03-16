@@ -1,7 +1,7 @@
 import axios from "axios";
 import AuthStorage from "./auth-storage";
 import Config from "../config/Config";
-import {store} from '../store/store';
+import {store} from '../store';
 
 const apiClient = axios.create({
     baseURL: Config.apiUrl,
@@ -56,7 +56,7 @@ const errorHandler = (err: any) => {
     console.log(err.response.status)
     if (err.response.status === 401) {
         AuthStorage.removeToken().then(() => {
-            store.dispatch({type: "AUTH/LOGOUT",payload:undefined})
+            store.dispatch({type: "AUTH/LOGOUT", payload: undefined})
         });
     }
 

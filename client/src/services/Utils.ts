@@ -29,9 +29,9 @@ export default {
         const firstLettersSum = this.getFirstLettersAsciiSum(name);
         return Colors.profileColors[+firstLettersSum % Colors.profileColors.length];
     },
-    createFormDataChangeProfile : (values : any) => {
+    createFormDataChangeProfile: (values: any) => {
         const formData = new FormData();
-        if(values.thumbnail) {
+        if (values.thumbnail) {
             const imageUri = Platform.OS === 'android' ? values.thumbnail.uri : values.thumbnail.uri.replace('file://', '');
             const imageMime = imageUri.substr(imageUri.lastIndexOf('.') + 1);
             formData.append('thumbnail', {
@@ -40,8 +40,8 @@ export default {
                 name: `image.${imageMime}`
             } as any);
         }
-        formData.append('first_name',values.first_name)
-        formData.append('last_name',values.last_name)
+        formData.append('first_name', values.first_name)
+        formData.append('last_name', values.last_name)
         return formData;
     }
 }

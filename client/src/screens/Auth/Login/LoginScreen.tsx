@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {View, Text, ActivityIndicator, TextInput, TouchableOpacity, Alert} from "react-native";
+import {View, Text, ActivityIndicator, TextInput, TouchableOpacity} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from "formik";
@@ -24,7 +24,6 @@ const validationSchema = yup.object().shape({
 const LoginScreen = () => {
     const dispatch = useDispatch()
     const {isLoading} = useSelector((state: ApplicationState) => state.authReducer)
-    const navigation = useNavigation()
     const formikRef = useRef<any>(null)
 
     const submit = async (values: any) => {
@@ -45,7 +44,6 @@ const LoginScreen = () => {
                 },
             );
             if (type === 'success') {
-                console.log(token)
                 dispatch(onFacebookLogin(token))
             }
         } catch (e) {
@@ -62,7 +60,7 @@ const LoginScreen = () => {
                 iosClientId: '861519663334-ekns07bj4dpad21pd31ob6dadhj2md44.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
             });
-            if(type==='success')
+            if (type === 'success')
                 dispatch(onGoogleLogin(accessToken, user))
         } catch (e) {
             console.warn(e)

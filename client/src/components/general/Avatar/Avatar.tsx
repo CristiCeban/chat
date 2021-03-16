@@ -1,7 +1,7 @@
 import React from "react";
 import Utils from "../../../services/Utils";
 import {styles} from "./styles";
-import {View,Text,Image} from "react-native";
+import {View, Text, Image} from "react-native";
 
 export type AvatarParam = {
     width: number,

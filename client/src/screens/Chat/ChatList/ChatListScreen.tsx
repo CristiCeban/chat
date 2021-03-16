@@ -8,8 +8,7 @@ const ChatListScreen = () => {
     const dispatch = useDispatch()
 
     const onLogout = () => dispatch(onLogoutAction())
-    const onGetProfile = () => dispatch(getProfile())
-    return(
+    return (
         <View style={styles.container}>
             <Text>Chat List Screen</Text>
             <TouchableOpacity onPress={onLogout}>

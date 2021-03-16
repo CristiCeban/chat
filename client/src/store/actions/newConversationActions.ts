@@ -3,15 +3,15 @@ import {User} from "../../models/user";
 import ApiService from '../../services/api'
 
 type contactsData = {
-    currentPage:number,
-    totalPages:number,
-    users:Array<User>,
+    currentPage: number,
+    totalPages: number,
+    users: Array<User>,
 }
 
 export interface IGetContacts {
     readonly type: 'NEW_CONVERSATION/GET_CONTACTS',
     payload: {
-        data:contactsData,
+        data: contactsData,
         initialLoading: boolean,
     }
 }
@@ -26,10 +26,16 @@ export interface ISetInProgressLazy {
     payload: boolean,
 }
 
+export interface IAddUserToNewConversation {
+    readonly type: 'NEW_CONVERSATION/ADD_USER_TO_NEW_CONVERSATION',
+    payload: User
+}
+
 export type NewConversationActions =
     | IGetContacts
     | ISetInProgress
     | ISetInProgressLazy
+    | IAddUserToNewConversation
 
 
 export const onGetContacts = (params: any = {}, initialLoading = true) => {
@@ -40,16 +46,21 @@ export const onGetContacts = (params: any = {}, initialLoading = true) => {
         try {
             dispatch({type: loadingType, payload: true})
             const response = await ApiService.get('profile/users', params)
-            console.log(response)
             dispatch({
                 type: 'NEW_CONVERSATION/GET_CONTACTS',
                 payload: {initialLoading, data: (response as any as contactsData)}
             })
         } catch (e) {
-
+            console.warn(e)
         } finally {
             dispatch({type: loadingType, payload: false})
         }
+    }
+}
+
+export const onAddUserToNewConversation = (user: User) => {
+    return async (dispatch: Dispatch<NewConversationActions>) => {
+        dispatch({type: 'NEW_CONVERSATION/ADD_USER_TO_NEW_CONVERSATION', payload: user})
     }
 }
 

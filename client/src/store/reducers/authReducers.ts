@@ -4,20 +4,20 @@ import {User} from "../../models/user";
 type AuthState = {
     isLoading: boolean,
     token: string | undefined,
-    user : User
+    user: User
 }
 
-const defaultUser : User = {
-    _id : '',
-    email : '',
-    first_name : '',
-    last_name : '',
+const defaultUser: User = {
+    _id: '',
+    email: '',
+    first_name: '',
+    last_name: '',
 }
 
 const initialState = {
     isLoading: false,
     token: undefined,
-    user : defaultUser,
+    user: defaultUser,
 }
 
 const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
@@ -31,7 +31,7 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
             return {
                 ...state,
                 token: action.payload.token,
-                user : action.payload.user,
+                user: action.payload.user,
             }
         case "AUTH/LOGOUT":
             return {
@@ -47,7 +47,7 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
         case "AUTH/GET_PROFILE":
             return {
                 ...state,
-                user:action.payload
+                user: action.payload
             }
         default:
             return state

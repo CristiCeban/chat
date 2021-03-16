@@ -1,9 +1,9 @@
 import React from "react";
 import {createStackNavigator} from "@react-navigation/stack";
 import {FontAwesome5} from '@expo/vector-icons';
-import {Text, TouchableOpacity} from "react-native";
+import {StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import { Ionicons } from '@expo/vector-icons';
+import {Ionicons} from '@expo/vector-icons';
 import Colors from "../constants/Colors";
 import ChatListScreen from "../screens/Chat/ChatList/ChatListScreen";
 import Avatar from "../components/general/Avatar/Avatar";
@@ -12,6 +12,7 @@ import {ApplicationState} from "../store";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
 import {onLogoutAction} from "../store/actions/authActions";
 import CreateConversationScreen from "../screens/Chat/CreateConversation/CreateConversationScreen";
+import CreateConversationReviewScreen from "../screens/Chat/CreateConversationReview/CreateConversationReviewScreen";
 
 
 const Stack = createStackNavigator<ChatStackParamList>()
@@ -19,8 +20,24 @@ const Stack = createStackNavigator<ChatStackParamList>()
 const ChatStackNavigator = () => {
     const dispatch = useDispatch()
     const {user} = useSelector((state: ApplicationState) => state.authReducer)
+    const {newUsersToCreateConversation} = useSelector((state: ApplicationState) => state.newConversationReducer)
 
     const onLogout = () => dispatch(onLogoutAction())
+
+    const createConversation = (navigation: any) => {
+        navigation.navigate('ChatList')
+    }
+
+    const onPressCreateConversation = (navigation: any) => {
+        if (newUsersToCreateConversation.length === 0)
+            return
+        else if (newUsersToCreateConversation.length === 1) {
+            createConversation(navigation)
+        } else {
+            navigation.navigate('CreateConversationReview')
+        }
+    }
+
 
     return (
         <Stack.Navigator
@@ -49,7 +66,8 @@ const ChatStackNavigator = () => {
                         </TouchableOpacity>
                     ),
                     headerRight: () => (
-                        <TouchableOpacity style={{marginRight: 20}} onPress={()=>navigation.navigate('CreateConversation')}>
+                        <TouchableOpacity style={{marginRight: 20}}
+                                          onPress={() => navigation.navigate('CreateConversation')}>
                             <FontAwesome5 name={'edit'} size={24} color={'black'}/>
                         </TouchableOpacity>
                     )
@@ -62,7 +80,7 @@ const ChatStackNavigator = () => {
                 options={({navigation}: any) => ({
                     title: 'Profile',
                     headerRight: () => (
-                        <TouchableOpacity onPress={onLogout} style={{marginRight:10}}>
+                        <TouchableOpacity onPress={onLogout} style={{marginRight: 10}}>
                             <Ionicons name="exit" size={24} color={Colors.red}/>
                         </TouchableOpacity>
                     )
@@ -72,12 +90,40 @@ const ChatStackNavigator = () => {
             <Stack.Screen
                 name={'CreateConversation'}
                 component={CreateConversationScreen}
-                options={({navigation}:any)=>({
+                options={({navigation}: any) => ({
                     title: 'Create Conversation',
+                    headerRight: () => (
+                        <TouchableOpacity style={{marginRight: 10}}
+                                          onPress={() => onPressCreateConversation(navigation)}
+                                          disabled={newUsersToCreateConversation.length < 1}>
+                            {newUsersToCreateConversation.length === 0 ?
+                                <Text style={{...styles.textRight, color: Colors.grey1}}>Next</Text> : null}
+                            {newUsersToCreateConversation.length === 1 ?
+                                <Text style={styles.textRight}>Create</Text> : null}
+                            {newUsersToCreateConversation.length > 1 ?
+                                <Text style={styles.textRight}>Next</Text> : null}
+
+                        </TouchableOpacity>
+                    )
                 })}
-                />
+            />
+            <Stack.Screen
+                name={'CreateConversationReview'}
+                component={CreateConversationReviewScreen}
+                options={({navigation}: any) => ({
+                    title: 'Conversation Review',
+                })}
+            />
         </Stack.Navigator>
     )
 }
+
+const styles = StyleSheet.create({
+    textRight: {
+        fontSize: 16,
+        marginRight: 5,
+        fontWeight: 'bold'
+    }
+})
 
 export default ChatStackNavigator

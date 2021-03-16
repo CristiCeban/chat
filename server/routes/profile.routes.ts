@@ -41,7 +41,6 @@ router.post(
         try {
             const {first_name, last_name, imagePath} = req.body
             const {user} = (req as any)
-            const currentUser = await User.findOne({"_id": Types.ObjectId(user.userId)}, {password: 0, "__v": 0})
 
             if (imagePath) {
                 const currentUser = await User.findOneAndUpdate({"_id": Types.ObjectId(user.userId)}, {
@@ -74,18 +73,30 @@ router.get(
     ],
     async (req, res) => {
         try {
-            const {page = 1, limit = 10} = req.query;
+            const {page = 1, limit = 10, search = ''} = req.query;
             const {user} = req
-            const users = await User.find({_id: {$nin: [Types.ObjectId(user.userId)]}}, {password: 0, __v: 0})
+            const users = await User.find({
+                _id: {$nin: [Types.ObjectId(user.userId)]},
+                $or: [
+                    {first_name: {$regex: search, $options: 'i'}},
+                    {last_name: {$regex: search, $options: 'i'}}
+                ]
+            }, {password: 0, __v: 0})
                 //@ts-ignore
-                .limit((limit * 1 as any))
+                .limit((limit as any))
                 //@ts-ignore
                 .skip((page - 1) * limit)
                 .exec()
-            const count = await User.countDocuments();
+            const count = await User.countDocuments({
+                _id: {$nin: [Types.ObjectId(user.userId)]},
+                $or: [
+                    {first_name: {$regex: search, $options: 'i'}},
+                    {last_name: {$regex: search, $options: 'i'}}
+                ]
+            });
             res.json({
                 users,
-                totalPages: Math.ceil((count -1) / limit),
+                totalPages: Math.ceil((count) / limit),
                 currentPage: page
             });
         } catch (e) {

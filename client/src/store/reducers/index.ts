@@ -4,7 +4,7 @@ import {NewConversationReducer} from "./newConversationReducers";
 
 const rootReducer = combineReducers({
     authReducer: AuthReducer,
-    newConversationReducer : NewConversationReducer,
+    newConversationReducer: NewConversationReducer,
 })
 
 export type ApplicationState = ReturnType<typeof rootReducer>

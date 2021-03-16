@@ -7,7 +7,7 @@ const Stack = createStackNavigator<RootStackParamList>()
 
 const RootNavigator = () => {
     return (
-        <Stack.Navigator screenOptions={{ headerShown: false }} >
+        <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name={"Root"} component={ChatStackNavigator}/>
         </Stack.Navigator>
     )
