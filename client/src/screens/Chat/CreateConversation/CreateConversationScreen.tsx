@@ -120,7 +120,9 @@ const CreateConversationScreen = () => {
                 : null}
 
             {!newContactsList?.length ?
-                <ActivityIndicator size={'large'} color={'red'}/>
+                <View style={styles.center}>
+                    <ActivityIndicator size={'large'} color={'red'}/>
+                </View>
                 :
                 <FlatList
                     data={newContactsList}

@@ -83,7 +83,7 @@ router.get(
                 ]
             }, {password: 0, __v: 0})
                 //@ts-ignore
-                .limit((limit as any))
+                .limit((limit*1 as any))
                 //@ts-ignore
                 .skip((page - 1) * limit)
                 .exec()

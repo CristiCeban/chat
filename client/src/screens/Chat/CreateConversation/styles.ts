@@ -61,5 +61,11 @@ export const styles = StyleSheet.create({
     },
     selectedUserContainer: {
         marginBottom: 10,
+    },
+    center:{
+        display:'flex',
+        alignItems:'center',
+        flex:1,
+        justifyContent:'center'
     }
 })

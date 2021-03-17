@@ -1,7 +1,7 @@
 import React from "react";
 import {createStackNavigator} from "@react-navigation/stack";
 import {FontAwesome5} from '@expo/vector-icons';
-import {StyleSheet, Text, TouchableOpacity} from "react-native";
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {Ionicons} from '@expo/vector-icons';
 import Colors from "../constants/Colors";
@@ -13,6 +13,10 @@ import ProfileScreen from "../screens/Profile/ProfileScreen";
 import {onLogoutAction} from "../store/actions/authActions";
 import CreateConversationScreen from "../screens/Chat/CreateConversation/CreateConversationScreen";
 import CreateConversationReviewScreen from "../screens/Chat/CreateConversationReview/CreateConversationReviewScreen";
+import {
+    createConversationAction,
+    resetNewConversationUsers
+} from "../store/actions/newConversationActions";
 
 
 const Stack = createStackNavigator<ChatStackParamList>()
@@ -20,19 +24,24 @@ const Stack = createStackNavigator<ChatStackParamList>()
 const ChatStackNavigator = () => {
     const dispatch = useDispatch()
     const {user} = useSelector((state: ApplicationState) => state.authReducer)
-    const {newUsersToCreateConversation} = useSelector((state: ApplicationState) => state.newConversationReducer)
+    const {
+        newUsersToCreateConversation,
+        isCreatingConversation
+    } = useSelector((state: ApplicationState) => state.newConversationReducer)
 
     const onLogout = () => dispatch(onLogoutAction())
 
-    const createConversation = (navigation: any) => {
+    const createConversation = async (navigation: any) => {
+        await dispatch(createConversationAction())
+        await dispatch(resetNewConversationUsers())
         navigation.navigate('ChatList')
     }
 
-    const onPressCreateConversation = (navigation: any) => {
+    const onPressCreateConversation = async (navigation: any) => {
         if (newUsersToCreateConversation.length === 0)
             return
         else if (newUsersToCreateConversation.length === 1) {
-            createConversation(navigation)
+            await createConversation(navigation)
         } else {
             navigation.navigate('CreateConversationReview')
         }
@@ -96,12 +105,18 @@ const ChatStackNavigator = () => {
                         <TouchableOpacity style={{marginRight: 10}}
                                           onPress={() => onPressCreateConversation(navigation)}
                                           disabled={newUsersToCreateConversation.length < 1}>
-                            {newUsersToCreateConversation.length === 0 ?
-                                <Text style={{...styles.textRight, color: Colors.grey1}}>Next</Text> : null}
-                            {newUsersToCreateConversation.length === 1 ?
-                                <Text style={styles.textRight}>Create</Text> : null}
-                            {newUsersToCreateConversation.length > 1 ?
-                                <Text style={styles.textRight}>Next</Text> : null}
+                            {isCreatingConversation ?
+                                <ActivityIndicator size={"small"} color={Colors.red} style={{marginRight: 5}}/>
+                                :
+                                <>
+                                    {newUsersToCreateConversation.length === 0 ?
+                                        <Text style={{...styles.textRight, color: Colors.grey1}}>Next</Text> : null}
+                                    {newUsersToCreateConversation.length === 1 ?
+                                        <Text style={styles.textRight}>Create</Text> : null}
+                                    {newUsersToCreateConversation.length > 1 ?
+                                        <Text style={styles.textRight}>Next</Text> : null}
+                                </>
+                            }
 
                         </TouchableOpacity>
                     )

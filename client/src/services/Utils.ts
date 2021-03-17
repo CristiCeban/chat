@@ -43,5 +43,10 @@ export default {
         formData.append('first_name', values.first_name)
         formData.append('last_name', values.last_name)
         return formData;
+    },
+    randomString : (size? : number) => {
+        if(!size)
+            size = 8
+        return Math.random().toString(36).slice(-size)
     }
 }

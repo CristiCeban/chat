@@ -8,6 +8,7 @@ type newConversationState = {
     inProgressLazyAllContacts: boolean,
     nextPageContacts: number,
     lastPageContacts: number,
+    isCreatingConversation: boolean,
 }
 
 const initialState = {
@@ -17,6 +18,7 @@ const initialState = {
     inProgressLazyAllContacts: false,
     nextPageContacts: 1,
     lastPageContacts: 2,
+    isCreatingConversation: false
 }
 
 const NewConversationReducer = (state: newConversationState = initialState, action: NewConversationActions) => {
@@ -55,6 +57,16 @@ const NewConversationReducer = (state: newConversationState = initialState, acti
                     [...state.newUsersToCreateConversation.filter(user => user._id !== action.payload._id)]
                     :
                     [...state.newUsersToCreateConversation, action.payload]
+            }
+        case "NEW_CONVERSATION/SET_CREATING_CONVERSATION":
+            return {
+                ...state,
+                isCreatingConversation: action.payload
+            }
+        case "NEW_CONVERSATION/RESET_NEW_CONVERSATION_USERS":
+            return {
+                ...state,
+                newUsersToCreateConversation : [],
             }
         default:
             return state

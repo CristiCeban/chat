@@ -1,31 +1,44 @@
-import React, {useState,useLayoutEffect} from "react";
-import {View, FlatList, TouchableOpacity, Text} from "react-native";
+import React, {useState, useLayoutEffect} from "react";
+import {View, FlatList, TouchableOpacity, Text, ActivityIndicator} from "react-native";
 import {styles} from "./styles";
 import {Input} from "native-base";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigation} from '@react-navigation/native'
 import ChatParticipantItem from "../../../components/chat/Lists/ChatParticipantItem/ChatParticipantItem";
 import {ApplicationState} from "../../../store";
+import {createConversationAction, resetNewConversationUsers} from "../../../store/actions/newConversationActions";
+import Colors from "../../../constants/Colors";
 
 const CreateConversationReviewScreen = () => {
     const navigation = useNavigation()
-    const {newUsersToCreateConversation} = useSelector((state: ApplicationState) => state.newConversationReducer)
+    const dispatch = useDispatch()
+    const {
+        newUsersToCreateConversation,
+        isCreatingConversation
+    } = useSelector((state: ApplicationState) => state.newConversationReducer)
     const [name, setName] = useState('');
 
-    useLayoutEffect(()=>{
+    useLayoutEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity onPress={onCreate} disabled={name.length < 4}>
-                    <Text style={name.length <4 ?  styles.uncheck : styles.textRight}>Create</Text>
+                <TouchableOpacity onPress={onCreate} disabled={name.length < 4 || isCreatingConversation}
+                                  style={{marginRight: 10}}>
+                    {isCreatingConversation ?
+                        <ActivityIndicator size={"small"} color={Colors.red} style={{marginRight: 5}}/>
+                        :
+                        <Text style={name.length < 4 ? styles.uncheck : styles.textRight}>Create</Text>
+                    }
                 </TouchableOpacity>
             )
         })
-    },[name])
+    }, [name, isCreatingConversation])
 
     const renderItem = ({item}: any) => <ChatParticipantItem user={item}/>
 
-    const onCreate = () => {
-
+    const onCreate = async () => {
+        await dispatch(createConversationAction(name))
+        await dispatch(resetNewConversationUsers())
+        navigation.navigate('ChatList')
     }
 
     return (
