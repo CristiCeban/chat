@@ -52,7 +52,33 @@ router.get(
 // /api/chat/room/rooms
 router.get(
     '/room/rooms',
+    [auth],
     async (req, res) => {
+        try {
+            const {page = 1, limit = 10, search = ''} = req.query;
+            const {user} = req
+            // const rooms = await Room.lookup({
+            //     path : 'user',
+            //     query: {}
+            // })
+            const rooms = await Room.find({
+                users: Types.ObjectId(user.userId),
+                name: {$regex: search, $options: 'i'}
+            })
+                .populate({
+                    path: 'users'
+                })
+                .populate({
+                    path: 'author'
+                })
+                .limit((limit * 1 as any))
+                .skip((page - 1) * limit)
+                .exec()
+            res.json(rooms)
+
+        } catch (e) {
+            res.status(500).json({message: 'Server error'})
+        }
 
     })
 

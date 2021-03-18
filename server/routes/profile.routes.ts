@@ -1,9 +1,11 @@
 import {Router} from "express"
 import {Types} from "mongoose";
-// import path from "path";
-
 const User = require('../models/User')
 const auth = require('../middlewares/auth.middleware')
+
+//THIS PART IS FOR UPLOADING FILES TO SERVER,BUT I AM USING CDN INSTEAD OF THIS,So...
+//
+// import path from "path";
 // const parseFormData = require('../middlewares/parseFormData.middleware')
 // const multer = require('multer');
 
