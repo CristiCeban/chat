@@ -37,7 +37,7 @@ router.post(
                 return res.status(400).json({
                     errors: [
                         {
-                            msg: 'This user already exist',
+                            msg: 'This user already exists',
                             param: 'email',
                             location: 'body',
                         }
@@ -80,13 +80,29 @@ router.post(
             const user = await User.findOne({email})
 
             if (!user) {
-                return res.status(400).json({message: "User with this email didn't exist"})
+                return res.status(400).json({
+                    errors: [
+                        {
+                            msg: "User with this email doesn't exists",
+                            param: 'email',
+                            location: 'body',
+                        }
+                    ]
+                })
             }
 
             const isMatch = await Utils.checkPassword(password,user.password)
 
             if (!isMatch) {
-                return res.status(400).json({message: 'Invalid password,try again'})
+                return res.status(400).json({
+                    errors: [
+                        {
+                            msg: "Password is not matching,Please try again",
+                            param: 'password',
+                            location: 'body',
+                        }
+                    ]
+                })
             }
 
 

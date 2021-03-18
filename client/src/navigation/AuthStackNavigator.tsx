@@ -3,6 +3,7 @@ import {createStackNavigator} from "@react-navigation/stack";
 import LoginScreen from "../screens/Auth/Login/LoginScreen";
 import {AuthStackParamList} from "../../types";
 import Colors from "../constants/Colors";
+import RegisterScreen from "../screens/Auth/Register/RegisterScreen";
 
 
 const Stack = createStackNavigator<AuthStackParamList>();
@@ -24,6 +25,10 @@ const AuthStackNavigator = () => {
             <Stack.Screen
                 name={'Login'}
                 component={LoginScreen}
+            />
+            <Stack.Screen
+                name={'Register'}
+                component={RegisterScreen}
             />
 
         </Stack.Navigator>

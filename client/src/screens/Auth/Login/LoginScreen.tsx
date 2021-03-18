@@ -23,7 +23,8 @@ const validationSchema = yup.object().shape({
 
 const LoginScreen = () => {
     const dispatch = useDispatch()
-    const {isLoading} = useSelector((state: ApplicationState) => state.authReducer)
+    const navigation = useNavigation()
+    const {isLoading,loginErrors} = useSelector((state: ApplicationState) => state.authReducer)
     const formikRef = useRef<any>(null)
 
     const submit = async (values: any) => {
@@ -92,6 +93,7 @@ const LoginScreen = () => {
                                 value={values.email}
                                 style={styles.textInput}
                                 returnKeyType={'next'}
+                                autoCompleteType={'email'}
                                 onChangeText={handleChange('email')}
                                 onBlur={handleBlur('email')}
                                 autoCapitalize={'none'}
@@ -100,6 +102,11 @@ const LoginScreen = () => {
                         <View style={styles.center}>
                             {touched.email && errors.email ?
                                 <Text style={styles.textError}>{errors.email}</Text> : null}
+                        </View>
+
+                        <View style={styles.center}>
+                            {loginErrors.length && loginErrors.find((error) => error.param==='email') ?
+                                <Text style={styles.textError}>{loginErrors.find((error) => error.param==='email')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>
@@ -115,9 +122,15 @@ const LoginScreen = () => {
                                 secureTextEntry={true}
                             />
                         </View>
+
                         <View style={styles.center}>
                             {touched.password && errors.password ?
                                 <Text style={styles.textError}>{errors.password}</Text> : null}
+                        </View>
+
+                        <View style={styles.center}>
+                            {loginErrors.length && loginErrors.find((error) => error.param==='password') ?
+                                <Text style={styles.textError}>{loginErrors.find((error) => error.param==='password')?.msg || ''}</Text> : null}
                         </View>
 
                         <TouchableOpacity style={styles.buttonContainer} disabled={isLoading}
@@ -157,7 +170,7 @@ const LoginScreen = () => {
                             }
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.register}>
+                        <TouchableOpacity style={styles.register} onPress={()=>navigation.navigate('Register')}>
                             <Text>Don't have an account yet? Register!</Text>
                         </TouchableOpacity>
                     </View>

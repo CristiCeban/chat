@@ -1,10 +1,14 @@
 import {AuthAction} from "../actions/authActions";
 import {User} from "../../models/user";
+import {ServerErrorType} from "../../models/errors";
 
 type AuthState = {
     isLoading: boolean,
     token: string | undefined,
-    user: User
+    user: User,
+    isRegistering: boolean,
+    registerErrors: Array<ServerErrorType>,
+    loginErrors: Array<ServerErrorType>,
 }
 
 const defaultUser: User = {
@@ -18,6 +22,9 @@ const initialState = {
     isLoading: false,
     token: undefined,
     user: defaultUser,
+    isRegistering: false,
+    registerErrors: [],
+    loginErrors: []
 }
 
 const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
@@ -48,6 +55,21 @@ const AuthReducer = (state: AuthState = initialState, action: AuthAction) => {
             return {
                 ...state,
                 user: action.payload
+            }
+        case "AUTH/SET_REGISTER":
+            return {
+                ...state,
+                isRegistering: action.payload
+            }
+        case "AUTH/SET_ERRORS_LOGIN":
+            return {
+                ...state,
+                loginErrors: action.payload,
+            }
+        case "AUTH/SET_ERRORS_REGISTER":
+            return {
+                ...state,
+                registerErrors: action.payload
             }
         default:
             return state
