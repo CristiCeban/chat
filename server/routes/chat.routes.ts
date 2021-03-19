@@ -57,24 +57,31 @@ router.get(
         try {
             const {page = 1, limit = 10, search = ''} = req.query;
             const {user} = req
-            // const rooms = await Room.lookup({
-            //     path : 'user',
-            //     query: {}
-            // })
             const rooms = await Room.find({
                 users: Types.ObjectId(user.userId),
                 name: {$regex: search, $options: 'i'}
-            })
+            }, {"__v": 0})
                 .populate({
-                    path: 'users'
+                    path: 'users',
+                    select: '-password -__v'
                 })
                 .populate({
-                    path: 'author'
+                    path: 'author',
+                    select: '-password -__v'
                 })
                 .limit((limit * 1 as any))
                 .skip((page - 1) * limit)
                 .exec()
-            res.json(rooms)
+
+            const count = await Room.countDocuments({
+                users: Types.ObjectId(user.userId),
+                name: {$regex: search, $options: 'i'}
+            })
+            res.json({
+                rooms,
+                totalPages: Math.ceil((count) / limit),
+                currentPage: page
+            })
 
         } catch (e) {
             res.status(500).json({message: 'Server error'})

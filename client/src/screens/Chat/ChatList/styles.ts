@@ -6,5 +6,13 @@ export const styles = StyleSheet.create({
         display: 'flex',
         backgroundColor: Colors.white2,
         flex: 1,
+        paddingLeft: 20,
+        paddingRight: 20,
+    },
+    center: {
+        display: 'flex',
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
     }
 })
