@@ -1,9 +1,9 @@
 import {Router} from "express"
-import config from 'config'
 import {Types} from "mongoose";
 
 const User = require('../models/User')
 const Room = require('../models/Room')
+const ConversationStatus = require('../models/ConversationStatus')
 const auth = require('../middlewares/auth.middleware')
 
 const router = Router()
@@ -33,6 +33,15 @@ router.post(
                     name,
                 })
                 await room.save()
+                await usersDB.map(async (user) => {
+                    const conversation = new ConversationStatus({
+                        room: room._id,
+                        user,
+                        isRead: true,
+                        nrUnread: 0,
+                    })
+                    await conversation.save()
+                })
                 return res.status(201).json({message: 'Room created with success'})
             }
         } catch (e) {
@@ -57,7 +66,7 @@ router.get(
         try {
             const {page = 1, limit = 10, search = ''} = req.query;
             const {user} = req
-            const rooms = await Room.find({
+            const roomsAvailable = await Room.find({
                 users: Types.ObjectId(user.userId),
                 name: {$regex: search, $options: 'i'}
             }, {"__v": 0})
@@ -72,6 +81,25 @@ router.get(
                 .limit((limit * 1 as any))
                 .skip((page - 1) * limit)
                 .exec()
+
+            const conversationsStatuses = await Promise.all(roomsAvailable.map(async (room) => {
+                return await ConversationStatus.findOne({user: Types.ObjectId(user.userId), room: room._id});
+            }))
+
+            console.log(conversationsStatuses)
+            const rooms = roomsAvailable.map((room: any, index) => {
+                return {
+                    _id: room._id,
+                    messages: room.messages,
+                    lastMessage: room.lastMessage,
+                    users: room.users,
+                    author: room.author,
+                    isDeleted: room.isDeleted,
+                    name: room.name,
+                    isRead: (conversationsStatuses[index] as any)?.isRead,
+                    nrUnread: (conversationsStatuses[index] as any)?.nrUnread,
+                }
+            })
 
             const count = await Room.countDocuments({
                 users: Types.ObjectId(user.userId),
