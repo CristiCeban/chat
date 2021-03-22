@@ -7,4 +7,6 @@ export type RoomType = {
     author: User,
     isDeleted: boolean,
     name: string,
+    isRead: boolean,
+    nrUnread: number,
 }

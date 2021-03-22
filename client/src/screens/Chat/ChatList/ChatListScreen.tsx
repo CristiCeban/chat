@@ -24,6 +24,8 @@ const ChatListScreen = () => {
         dispatch(onGetRooms())
     }, [])
 
+    const handleRefresh = () => dispatch(onGetRooms())
+
     const renderItem = ({item}: any) => <Room room={item}/>
 
     return (
@@ -37,6 +39,8 @@ const ChatListScreen = () => {
                     data={rooms}
                     renderItem={renderItem}
                     keyExtractor={item => (item._id)}
+                    onRefresh={handleRefresh}
+                    refreshing={inProgressRooms}
                 />
             }
         </View>

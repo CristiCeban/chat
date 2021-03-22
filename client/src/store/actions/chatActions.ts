@@ -48,7 +48,7 @@ export const onGetRooms = (params: any = {}, initialLoading = true) => {
         } catch (e) {
             console.log(e)
         } finally {
-            dispatch({type: loadingType, payload: true})
+            dispatch({type: loadingType, payload: false})
         }
     }
 }

@@ -32,7 +32,6 @@ const CreateConversationScreen = () => {
     }, [search])
 
     const handleRefresh = () => {
-        console.log('refresh')
         dispatch(onGetContacts({search}))
     }
 
