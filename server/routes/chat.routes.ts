@@ -3,6 +3,7 @@ import {Types} from "mongoose";
 
 const User = require('../models/User')
 const Room = require('../models/Room')
+const Message = require('../models/Message')
 const ConversationStatus = require('../models/ConversationStatus')
 const auth = require('../middlewares/auth.middleware')
 
@@ -18,7 +19,7 @@ router.post(
             const {users, name} = req.body
             const usersDB = [...users.map(user => Types.ObjectId(user)), Types.ObjectId(user.userId)]
 
-            const roomToSearch = await Room.findOne({users: {$all: usersDB}})
+            const roomToSearch = await Room.findOne({users: {$eq: usersDB}})
             if (roomToSearch) {
                 if (roomToSearch.isDeleted) {
                     await Room.findOneAndUpdate({"_id": roomToSearch.id}, {$set: {isDeleted: false}})
@@ -86,7 +87,6 @@ router.get(
                 return await ConversationStatus.findOne({user: Types.ObjectId(user.userId), room: room._id});
             }))
 
-            console.log(conversationsStatuses)
             const rooms = roomsAvailable.map((room: any, index) => {
                 return {
                     _id: room._id,
@@ -120,7 +120,12 @@ router.get(
 // /api/chat/room/:id
 router.get(
     '/room/:id',
+    [auth],
     async (req, res) => {
+        const {page = 1, limit = 10, search = ''} = req.query
+        const id = req.params
+        const {user} = req
+        // const room = await Room.findOne({users:})
 
     })
 
@@ -134,8 +139,23 @@ router.get(
 // /api/chat/message/room/:id
 router.get(
     '/message/room/:id',
+    [auth],
     async (req, res) => {
-
+        const {page = 1, limit = 10, search = ''} = req.query
+        const {id} = req.params
+        const user = req
+        const messages = await Message.find({
+            room: id,
+            name: {$regex: search, $options: 'i'}
+        }, {"__v": 0})
+            .populate({
+                path: 'author',
+                select: '-password -__v'
+            })
+            .limit((limit * 1 as any))
+            .skip((page - 1) * limit)
+            .exec()
+        console.log(messages)
     })
 
 

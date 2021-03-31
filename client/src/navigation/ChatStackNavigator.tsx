@@ -17,6 +17,7 @@ import {
     createConversationAction,
     resetNewConversationUsers
 } from "../store/actions/newConversationActions";
+import ChatRoomScreen from "../screens/Chat/ChatRoom/ChatRoomScreen";
 
 
 const Stack = createStackNavigator<ChatStackParamList>()
@@ -128,6 +129,10 @@ const ChatStackNavigator = () => {
                 options={({navigation}: any) => ({
                     title: 'Conversation Review',
                 })}
+            />
+            <Stack.Screen
+                name={'ChatRoom'}
+                component={ChatRoomScreen}
             />
         </Stack.Navigator>
     )

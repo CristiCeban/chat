@@ -25,13 +25,36 @@ export interface ISetLoadingRooms {
 export interface ISetLoadingRoomsLazy {
     readonly type: 'CHAT/SET_LOADING_ROOMS_LAZY',
     payload: boolean
+}
 
+export interface ISetLoadingRoom {
+    readonly type: 'CHAT/SET_LOADING_ROOM',
+    payload: boolean,
+}
+
+export interface ISetLoadingRoomLazy {
+    readonly type: 'CHAT/SET_LOADING_ROOM_LAZY',
+    payload: boolean,
+}
+
+export interface IGetRoom {
+    readonly type: 'CHAT/GET_ROOM'
+    payload: any,
+}
+
+export interface ISelectRoom {
+    readonly type: 'CHAT/SELECT_ROOM',
+    payload: any,
 }
 
 export type ChatActions =
     | IChatGetRooms
     | ISetLoadingRooms
     | ISetLoadingRoomsLazy
+    | ISetLoadingRoom
+    | ISetLoadingRoomLazy
+    | IGetRoom
+    | ISelectRoom
 
 export const onGetRooms = (params: any = {}, initialLoading = true) => {
     const param = {page: 1, limit: 10}
@@ -51,4 +74,14 @@ export const onGetRooms = (params: any = {}, initialLoading = true) => {
             dispatch({type: loadingType, payload: false})
         }
     }
+}
+
+export const selectRoom = (room : RoomType) => {
+    return async (dispatch : Dispatch<ChatActions>) => {
+        dispatch({type:'CHAT/SELECT_ROOM',payload:room._id})
+    }
+}
+
+export const getRoom = (roomId : number) => {
+
 }

@@ -42,10 +42,10 @@ const GroupImage = ({users, style, width}: GroupImageParams) => {
     if (num === 1) {
         return (
             <View style={styles.container}>
-                <Avatar width={width} height={width - 2} fontSize={width / 2} profile={{
+                <AvatarGroupImage width={width} height={width} fontSize={width / 2} profile={{
                     name: users[0].first_name + ' ' + users[0].last_name,
                     image: users[0]?.imagePath || '',
-                }}/>
+                }} containerStyle={{}}/>
             </View>
         )
     }
@@ -57,23 +57,66 @@ const GroupImage = ({users, style, width}: GroupImageParams) => {
                     <AvatarGroupImage width={width} height={width} fontSize={width / 2} profile={{
                         name: users[0].first_name + ' ' + users[0].last_name,
                         image: users[0]?.imagePath || '',
-                    }}
-                            containerStyle={{marginRight: div / 2, left: 0}}
-                    />
+                    }} containerStyle={{marginRight: div / 2, left: 0}}/>
                 </View>
                 <View style={styles.twoContainer}>
                     <AvatarGroupImage width={width} height={width} fontSize={width / 2} profile={{
                         name: users[1].first_name + ' ' + users[1].last_name,
                         image: users[1]?.imagePath || '',
-                    }}
-                            containerStyle={{marginLeft: div / 2, right: div}}
-                    />
+                    }} containerStyle={{marginLeft: div / 2, right: div}}/>
+                </View>
+            </View>
+        )
+    }
+    if (num === 3) {
+        return (
+            <View style={styles.container}>
+                <View style={styles.twoContainer}>
+                    <AvatarGroupImage width={width} height={width} fontSize={width / 2} profile={{
+                        name: users[0].first_name + ' ' + users[0].last_name,
+                        image: users[0]?.imagePath || '',
+                    }} containerStyle={{marginRight: div / 2, left: 0}}/>
+                </View>
+                <View style={styles.twoContainer}>
+                    <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                        name: users[1].first_name + ' ' + users[1].last_name,
+                        image: users[1]?.imagePath || '',
+                    }} containerStyle={styles.fourContainer}/>
+                </View>
+                <View style={styles.twoContainer}>
+                    <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                        name: users[2].first_name + ' ' + users[2].last_name,
+                        image: users[2]?.imagePath || '',
+                    }} containerStyle={styles.fourContainer}/>
                 </View>
             </View>
         )
     }
 
-    return null;
+    return (
+        <View style={styles.container}>
+            <View>
+                <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                    name: users[0].first_name + ' ' + users[0].last_name,
+                    image: users[0]?.imagePath || '',
+                }} containerStyle={styles.fourContainer}/>
+                <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                    name: users[1].first_name + ' ' + users[1].last_name,
+                    image: users[1]?.imagePath || '',
+                }} containerStyle={styles.fourContainer}/>
+            </View>
+            <View>
+                <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                    name: users[2].first_name + ' ' + users[2].last_name,
+                    image: users[2]?.imagePath || '',
+                }} containerStyle={styles.fourContainer}/>
+                <AvatarGroupImage width={div} height={div} fontSize={div / 2} profile={{
+                    name: users[3].first_name + ' ' + users[3].last_name,
+                    image: users[3]?.imagePath || '',
+                }} containerStyle={styles.fourContainer}/>
+            </View>
+        </View>
+    )
 
 }
 

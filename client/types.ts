@@ -17,5 +17,6 @@ export type ChatStackParamList = {
     ChatList: undefined,
     Profile: undefined,
     CreateConversation: undefined,
-    CreateConversationReview : undefined
+    CreateConversationReview: undefined,
+    ChatRoom: undefined,
 }

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
+import {NavigationContainer} from '@react-navigation/native';
 import RootNavigator from "./RootNavigator";
 import {useDispatch, useSelector} from "react-redux";
 import {ApplicationState} from "../store";
@@ -7,6 +7,9 @@ import {navigationRef} from "../services/RootNavigation";
 import AuthStackNavigator from "./AuthStackNavigator";
 import AuthStorage from "../services/auth-storage";
 import {getProfile, setTokenAction} from "../store/actions/authActions";
+import Pusher from 'pusher-js/react-native';
+
+Pusher.logToConsole = true;
 
 const Navigation = () => {
     const dispatch = useDispatch()
@@ -18,6 +21,20 @@ const Navigation = () => {
             return
         dispatch(getProfile())
     }
+
+    useEffect(()=>{
+        if(token&&user._id){
+            const pusher = new Pusher('e7b49de1db93e5713dc5', {
+                cluster: 'eu'
+            });
+            const channel = pusher.subscribe(`user.${user._id}`)
+            console.log(user._id)
+            channel.bind('message',(data:any) => {
+                console.log(data)
+            })
+            return () => channel.unsubscribe()
+        }
+    },[token,user._id])
 
     useEffect(() => {
         (async () => {

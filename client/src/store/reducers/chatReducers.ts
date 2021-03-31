@@ -7,6 +7,7 @@ type chatState = {
     inProgressLazyRooms: boolean,
     nextPageRooms: number,
     lastPageRooms: number,
+    selectedRoom: string | undefined,
 }
 
 const initialState = {
@@ -15,6 +16,7 @@ const initialState = {
     inProgressLazyRooms: false,
     nextPageRooms: 1,
     lastPageRooms: 2,
+    selectedRoom: undefined
 }
 
 const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
@@ -45,6 +47,11 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
                     nextPageRooms: state.nextPageRooms + 1,
                     lastPageRooms: action.payload.data.totalPages
                 }
+            }
+        case "CHAT/SELECT_ROOM":
+            return {
+                ...state,
+                selectedRoom: action.payload
             }
         default:
             return state
