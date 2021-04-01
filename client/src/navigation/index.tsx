@@ -30,6 +30,7 @@ const Navigation = () => {
             const channel = pusher.subscribe(`user.${user._id}`)
             console.log(user._id)
             channel.bind('message',(data:any) => {
+                console.log('data received')
                 console.log(data)
             })
             return () => channel.unsubscribe()

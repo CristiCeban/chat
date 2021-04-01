@@ -16,7 +16,7 @@ const RoomHeader = ({room}:RoomHeaderParams) => {
     const roomName = users.length === 1 ? users[0].first_name + ' ' + users[0].last_name : room.name
     return(
         <TouchableOpacity style={styles.container}>
-            <GroupImage users={users} style={{}} width={40}/>
+            <GroupImage users={users} style={{}} width={30}/>
             <Text style={styles.text}>{roomName}</Text>
         </TouchableOpacity>
     )

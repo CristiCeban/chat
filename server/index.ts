@@ -1,5 +1,5 @@
 import {Socket} from "socket.io";
-
+import {MessageControl} from "./control/messageControl";
 const cluster = require("cluster");
 const http = require("http");
 const {Server} = require("socket.io");
@@ -8,7 +8,6 @@ const numCPUs = require("os").cpus().length;
 const {setupMaster, setupWorker} = require("@socket.io/sticky");
 const express = require("express")
 const mongoose = require('mongoose')
-const Pusher = require("pusher");
 const cors = require('cors')
 const config = require('config')
 const apiPort = config.get('apiPort') || 3000
@@ -25,13 +24,6 @@ const startWorker = async () => {
         })
 
         const app = express()
-        const pusher = new Pusher({
-            appId: "1170414",
-            key: "e7b49de1db93e5713dc5",
-            secret: "7ad6f85ba2dbad914694",
-            cluster: "eu",
-            useTLS: true
-        });
 
         // pusher.trigger("my-channel", "my-event", {
         //     message: "hello world"
@@ -60,15 +52,7 @@ const startWorker = async () => {
         setupWorker(io);
 
         io.on("connection", (socket:Socket) => {
-            socket.on("message",(data) => {
-                console.log(data)
-            })
-            // pusher.trigger("my-channel", "my-event", {
-            //     message: "hello world"
-            // });
-            console.log(`connection to ${process.pid}`);
-            // socket.on
-            socket.emit('hello', {procces_pid: process.pid})
+            MessageControl(socket)
         });
     } catch (e) {
         console.log(`server error with process ${process.pid}`)
