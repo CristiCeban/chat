@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import {Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import RootNavigator from "./RootNavigator";
 import {useDispatch, useSelector} from "react-redux";
@@ -30,6 +31,7 @@ const Navigation = () => {
             const channel = pusher.subscribe(`user.${user._id}`)
             console.log(user._id)
             channel.bind('message',(data:any) => {
+                Alert.alert('New Message',JSON.stringify(data))
                 console.log('data received')
                 console.log(data)
             })

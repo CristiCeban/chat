@@ -1,5 +1,6 @@
 import {Platform} from 'react-native'
 import Colors from "../constants/Colors";
+import moment from "moment";
 
 export default {
     getFirstLettersAsciiSum(value: string): number {
@@ -44,9 +45,16 @@ export default {
         formData.append('last_name', values.last_name)
         return formData;
     },
-    randomString : (size? : number) => {
-        if(!size)
+    randomString: (size?: number) => {
+        if (!size)
             size = 8
         return Math.random().toString(36).slice(-size)
+    },
+    momentParseDate: (date: string, pattern: string = 'L') => {
+        return moment.utc(date).format(pattern)
+    },
+    momentParseDateCalendar: (date:string) => {
+        return moment(date).calendar()
     }
+
 }

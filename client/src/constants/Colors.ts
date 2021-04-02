@@ -5,11 +5,9 @@ export default {
     // meanBlue : '#1C2C58',
     // swissBlue : '#121F40',
     // grayishViolet : '#383140',
-    // grey: '#A79C93',
     // red: '#C1403D',
     // light1: '#F1E0D6',
     // light2: '#DCD9C6',
-    // coffeeLight: '#A4978E',
     // blueberries: '#824CA7',
     // blueberriesLight: '#A882C1',
     // ocean : '#81A3A7',
@@ -33,5 +31,6 @@ export default {
     grey1: '#B5B3Be',
     grey2: '#D3D0Da',
     grey3: '#E0E8F0',
+    coffeeLight: '#A4978E',
     profileColors: ['#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5', '#00897b', '#43a047', '#c0ca33', '#fb8c00', '#3e2723']
 };

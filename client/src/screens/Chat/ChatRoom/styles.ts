@@ -7,6 +7,14 @@ export const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
     },
+    containerData:{
+        display:'flex',
+        flex:1,
+    },
+    list:{
+        display:'flex',
+        flex:1,
+    },
     footer: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -32,5 +40,11 @@ export const styles = StyleSheet.create({
     },
     containerSend:{
         marginLeft:5,
+    },
+    center: {
+        display: 'flex',
+        alignItems: 'center',
+        flex: 1,
+        justifyContent: 'center'
     }
 })

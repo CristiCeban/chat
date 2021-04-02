@@ -1,8 +1,9 @@
 import {User} from "./user";
+import {MessageType} from "./Message";
 
 export type RoomType = {
     _id: string,
-    messages: Array<string>,
+    lastMessage?: MessageType,
     users: Array<User>
     author: User,
     isDeleted: boolean,

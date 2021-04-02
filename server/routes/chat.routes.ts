@@ -72,6 +72,20 @@ router.get(
                 name: {$regex: search, $options: 'i'}
             }, {"__v": 0})
                 .populate({
+                    path: 'messages',
+                    select: '-__v -room',
+                    populate: {
+                        path: 'author',
+                        select: '-password -__v'
+                    },
+                    options: {
+                        limit: 1,
+                        sort: {
+                            date: -1
+                        }
+                    }
+                })
+                .populate({
                     path: 'users',
                     select: '-password -__v'
                 })
@@ -90,8 +104,7 @@ router.get(
             const rooms = roomsAvailable.map((room: any, index) => {
                 return {
                     _id: room._id,
-                    messages: room.messages,
-                    lastMessage: room.lastMessage,
+                    lastMessage: room.messages[0],
                     users: room.users,
                     author: room.author,
                     isDeleted: room.isDeleted,
@@ -141,21 +154,28 @@ router.get(
     '/message/room/:id',
     [auth],
     async (req, res) => {
-        const {page = 1, limit = 10, search = ''} = req.query
+        const {page = 1, limit = 10} = req.query
         const {id} = req.params
-        const user = req
+        const {user} = req
         const messages = await Message.find({
-            room: id,
-            name: {$regex: search, $options: 'i'}
-        }, {"__v": 0})
+            room: Types.ObjectId(id),
+        }, {"__v": 0, room: 0})
             .populate({
                 path: 'author',
                 select: '-password -__v'
             })
+            .sort({date: -1})
             .limit((limit * 1 as any))
             .skip((page - 1) * limit)
             .exec()
-        console.log(messages)
+        const count = await Message.countDocuments({
+            room: Types.ObjectId(id)
+        })
+        res.json({
+            messages,
+            totalPages: Math.ceil((count) / limit),
+            currentPage: page
+        })
     })
 
 
