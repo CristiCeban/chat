@@ -107,6 +107,21 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
                 }
             }
 
+        case "CHAT/PUSH_MESSAGE":
+            return {
+                ...state,
+                messages: [action.payload, ...state.messages],
+                rooms: state.rooms.map(room => {
+                    if(room._id === action.payload.room?._id){
+                        return {
+                            ...room,
+                            
+                        }
+                    }
+                    return room
+                })
+            }
+
 
         default:
             return state

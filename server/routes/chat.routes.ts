@@ -171,6 +171,13 @@ router.get(
         const count = await Message.countDocuments({
             room: Types.ObjectId(id)
         })
+        await ConversationStatus.findOneAndUpdate({
+            room: Types.ObjectId(id),
+            user: Types.ObjectId(user.userId)
+        }, {
+            isRead: true,
+            nrUnread: 0
+        })
         res.json({
             messages,
             totalPages: Math.ceil((count) / limit),

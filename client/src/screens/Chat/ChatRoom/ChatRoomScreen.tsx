@@ -18,8 +18,11 @@ import {ApplicationState} from "../../../store";
 import RoomHeader from "../../../components/chat/Header/RoomHeader/RoomHeader";
 import {styles} from "./styles";
 import Colors from "../../../constants/Colors";
-import {getRoomMessages} from "../../../store/actions/chatActions";
+import {getRoomMessages, pushMessage} from "../../../store/actions/chatActions";
 import MessageItem from "../../../components/chat/Lists/MessageItem/MessageItem";
+import {MessageType} from "../../../models/Message";
+import * as util from "util";
+import Utils from "../../../services/Utils";
 
 
 const ChatRoomScreen = ({route}: any) => {
@@ -40,7 +43,8 @@ const ChatRoomScreen = ({route}: any) => {
     const [inputText, setInputText] = useState<string>('')
 
     useEffect(() => {
-        dispatch(getRoomMessages(selectedRoom))
+        if (selectedRoom)
+            dispatch(getRoomMessages(selectedRoom))
     }, [selectedRoom])
 
     useLayoutEffect(() => {
@@ -64,8 +68,12 @@ const ChatRoomScreen = ({route}: any) => {
         }
     }, [selectedRoom])
 
+    const loadMore = () => {
+        if (nextPageMessage <= lastPageMessage && !isLoadingRoomLazy && selectedRoom)
+            dispatch(getRoomMessages(selectedRoom, {page: nextPageMessage}, false))
+    }
+
     const onSendMessage = async () => {
-        console.log(inputText)
         if (inputRef) {
             socketClient.emit('message', {
                 content: inputText,
@@ -75,9 +83,23 @@ const ChatRoomScreen = ({route}: any) => {
             setInputText('')
         }
         inputRef?.current?.blur()
+        const message: MessageType = {
+            author: user,
+            content: inputText,
+            _id: Utils.randomString(15),
+            date: new Date().toUTCString(),
+            room
+        }
+        dispatch(pushMessage(message))
     }
 
-    const renderItem = ({item}:any) => <MessageItem item={item}/>
+    const renderFooter = () => {
+        if (isLoadingRoomLazy)
+            return <ActivityIndicator size={'large'} style={styles.listFooter} color={Colors.red}/>
+        return null
+    }
+
+    const renderItem = ({item}: any) => <MessageItem item={item}/>
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -92,8 +114,13 @@ const ChatRoomScreen = ({route}: any) => {
                         inverted={true}
                         style={styles.list}
                         contentContainerStyle={{flexGrow: 1, justifyContent: 'flex-end',}}
-                        keyExtractor={(item)=>item._id}
+                        keyExtractor={(item) => item._id}
                         renderItem={renderItem}
+                        showsVerticalScrollIndicator={false}
+                        initialNumToRender={10}
+                        onEndReachedThreshold={0.2}
+                        onEndReached={loadMore}
+                        ListFooterComponent={renderFooter}
                     />
                     <View style={styles.footer}>
                         <View style={styles.flexRow}>

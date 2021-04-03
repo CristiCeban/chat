@@ -54,7 +54,17 @@ export interface IGetRoom {
 
 export interface ISelectRoom {
     readonly type: 'CHAT/SELECT_ROOM',
-    payload: any,
+    payload: string | undefined,
+}
+
+export interface IUpdateLastMessage {
+    readonly type: 'CHAT/UPDATE_LAST_MESSAGE',
+    payload: string | undefined
+}
+
+export interface IPushMessage {
+    readonly type: 'CHAT/PUSH_MESSAGE',
+    payload: MessageType,
 }
 
 export type ChatActions =
@@ -65,6 +75,8 @@ export type ChatActions =
     | ISetLoadingRoom
     | ISetLoadingRoomLazy
     | ISelectRoom
+    | IPushMessage
+    | IUpdateLastMessage
 
 export const onGetRooms = (params: any = {}, initialLoading = true) => {
     const param = {page: 1, limit: 10}
@@ -117,3 +129,11 @@ export const getRoomMessages = (roomId: string, params: any = {}, initialLoading
         }
     }
 }
+
+export const pushMessage = (message: MessageType) => {
+    return async (dispatch: Dispatch<ChatActions>) => {
+        dispatch({type: 'CHAT/PUSH_MESSAGE', payload: message})
+    }
+}
+
+
