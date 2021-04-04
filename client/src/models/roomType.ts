@@ -10,4 +10,5 @@ export type RoomType = {
     name: string,
     isRead: boolean,
     nrUnread: number,
+    lastUpdated?: Date,
 }

@@ -21,7 +21,6 @@ import Colors from "../../../constants/Colors";
 import {getRoomMessages, pushMessage} from "../../../store/actions/chatActions";
 import MessageItem from "../../../components/chat/Lists/MessageItem/MessageItem";
 import {MessageType} from "../../../models/Message";
-import * as util from "util";
 import Utils from "../../../services/Utils";
 
 
@@ -75,22 +74,18 @@ const ChatRoomScreen = ({route}: any) => {
 
     const onSendMessage = async () => {
         if (inputRef) {
-            socketClient.emit('message', {
+            const message: MessageType = {
+                author: user,
                 content: inputText,
-                user,
-                roomId: selectedRoom
-            })
+                _id: Utils.randomString(15),
+                date: new Date().toUTCString(),
+                room
+            }
+            socketClient.emit('message', {...message})
             setInputText('')
+            inputRef?.current?.blur()
+            dispatch(pushMessage(message))
         }
-        inputRef?.current?.blur()
-        const message: MessageType = {
-            author: user,
-            content: inputText,
-            _id: Utils.randomString(15),
-            date: new Date().toUTCString(),
-            room
-        }
-        dispatch(pushMessage(message))
     }
 
     const renderFooter = () => {

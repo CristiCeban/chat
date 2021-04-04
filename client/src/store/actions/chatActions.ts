@@ -67,6 +67,11 @@ export interface IPushMessage {
     payload: MessageType,
 }
 
+export interface IOnPusherMessage {
+    readonly type: 'CHAT/ON_PUSHER_MESSAGE',
+    payload: MessageType,
+}
+
 export type ChatActions =
     | IChatGetRooms
     | ISetLoadingRooms
@@ -77,6 +82,7 @@ export type ChatActions =
     | ISelectRoom
     | IPushMessage
     | IUpdateLastMessage
+    | IOnPusherMessage
 
 export const onGetRooms = (params: any = {}, initialLoading = true) => {
     const param = {page: 1, limit: 10}
@@ -136,4 +142,8 @@ export const pushMessage = (message: MessageType) => {
     }
 }
 
-
+export const onPusherMessage = (message: MessageType) => {
+    return async (dispatch: Dispatch<ChatActions>) => {
+        dispatch({type:'CHAT/ON_PUSHER_MESSAGE',payload:message})
+    }
+}

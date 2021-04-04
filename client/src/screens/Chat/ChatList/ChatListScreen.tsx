@@ -1,16 +1,20 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {onLogoutAction} from "../../../store/actions/authActions";
+import {useNavigation} from '@react-navigation/native';
 import {styles} from "./styles";
 import {ApplicationState} from "../../../store";
 import {onGetRooms} from "../../../store/actions/chatActions";
 import Colors from "../../../constants/Colors";
 import Room from "../../../components/chat/Lists/Room/Room";
+import {Ionicons} from "@expo/vector-icons";
+import {Input} from "native-base";
+import {onGetContacts} from "../../../store/actions/newConversationActions";
 
 const ChatListScreen = () => {
     const dispatch = useDispatch()
-    const {token} = useSelector((state: ApplicationState) => state.authReducer)
+    const navigation = useNavigation();
+    const [search, setSearch] = useState<string>('')
     const {
         lastPageRooms,
         nextPageRooms,
@@ -18,30 +22,68 @@ const ChatListScreen = () => {
         inProgressLazyRooms,
         inProgressRooms
     } = useSelector((state: ApplicationState) => state.chatReducer)
-    // console.log(token)
 
     useEffect(() => {
         dispatch(onGetRooms())
     }, [])
 
+    useEffect(() => {
+        dispatch(onGetRooms({search:search.toLowerCase()}))
+    }, [search])
+
     const handleRefresh = () => dispatch(onGetRooms())
 
     const renderItem = ({item}: any) => <Room room={item}/>
 
+    const onCreate = () => navigation.navigate('CreateConversation')
+
     return (
         <View style={styles.container}>
-            {!rooms?.length ?
+            <View style={styles.tagInputContainer}>
+                <Ionicons name={'ios-search'} size={24} color={'black'} style={{paddingLeft: 5, paddingTop: 0}}/>
+                <Input
+                    style={styles.tagInput}
+                    placeholder="Search for user"
+                    autoFocus
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    value={search}
+                    onChangeText={(value: string) => setSearch(value)}
+                />
+                <TouchableOpacity
+                    onPress={() => setSearch('')}
+                >
+                    <Ionicons name={'ios-close'} size={28} color={'black'} style={{paddingLeft: 10}}/>
+                </TouchableOpacity>
+            </View>
+            {inProgressRooms ?
                 <View style={styles.center}>
                     <ActivityIndicator size={'large'} color={Colors.red}/>
                 </View>
                 :
-                < FlatList
-                    data={rooms}
-                    renderItem={renderItem}
-                    keyExtractor={item => (item._id)}
-                    onRefresh={handleRefresh}
-                    refreshing={inProgressRooms}
-                />
+                <>
+                    {!rooms?.length ?
+                        <View style={styles.center}>
+                            <View style={styles.containerInfo}>
+                                <Text>Don't have a conversation yet?</Text>
+                            </View>
+                            <TouchableOpacity style={styles.containerCreate} onPress={onCreate}>
+                                <Text style={styles.textCreate}>Create One!</Text>
+                            </TouchableOpacity>
+                        </View>
+                        :
+                        <>
+                            < FlatList
+                                data={rooms}
+                                renderItem={renderItem}
+                                keyExtractor={item => (item._id)}
+                                onRefresh={handleRefresh}
+                                refreshing={inProgressRooms}
+                            />
+                        </>
+                    }
+
+                </>
             }
         </View>
     )

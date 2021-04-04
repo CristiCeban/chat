@@ -1,7 +1,6 @@
 import {Router} from "express"
 import {Types} from "mongoose";
 
-const User = require('../models/User')
 const Room = require('../models/Room')
 const Message = require('../models/Message')
 const ConversationStatus = require('../models/ConversationStatus')
@@ -69,7 +68,49 @@ router.get(
             const {user} = req
             const roomsAvailable = await Room.find({
                 users: Types.ObjectId(user.userId),
-                name: {$regex: search, $options: 'i'}
+                // name: {$regex: search, $options: 'i'}
+
+                $or: [
+                    {name: {$regex: search, $options: 'i'}},
+                    // {
+                    //     users: {
+                    //         $elemMatch: {
+                    //             first_name:
+                    //                 {
+                    //                     $regex: search,
+                    //                     $options: 'i',
+                    //                     // _id: {$ne: Types.ObjectId(user.userId)}
+                    //                 }
+                    //         },
+                    //
+                    //
+                    //         // $elemMatch: {
+                    //         //     first_name: search,
+                    //         // }
+                    //     }
+                    // }
+                    // {
+                    //     users: {
+                    //         first_name:
+                    //             {
+                    //                 $regex: search,
+                    //                 $options: 'i',
+                    //                 // _id: {$ne: Types.ObjectId(user.userId)}
+                    //             }
+                    //     }
+                    // },
+                    //     {
+                    //         users:
+                    //             {
+                    //                 last_name:
+                    //                     {
+                    //                         $regex: search,
+                    //                         $options: 'i',
+                    //                         // _id: {$ne: Types.ObjectId(user.userId)}
+                    //                     }
+                    //             }
+                    //     }
+                ],
             }, {"__v": 0})
                 .populate({
                     path: 'messages',
@@ -93,12 +134,31 @@ router.get(
                     path: 'author',
                     select: '-password -__v'
                 })
+                .sort({lastUpdated: -1})
                 .limit((limit * 1 as any))
                 .skip((page - 1) * limit)
                 .exec()
 
             const conversationsStatuses = await Promise.all(roomsAvailable.map(async (room) => {
-                return await ConversationStatus.findOne({user: Types.ObjectId(user.userId), room: room._id});
+                return await ConversationStatus.findOne({
+                        user: Types.ObjectId(user.userId), room: room._id,
+                    //     $or: [
+                    //         {name: {$regex: search, $options: 'i'}},
+                    //         {
+                    //             users: {
+                    //                 $elemMatch: {
+                    //                     first_name:
+                    //                         {
+                    //                             $regex: search,
+                    //                             $options: 'i',
+                    //                             // _id: {$ne: Types.ObjectId(user.userId)}
+                    //                         }
+                    //                 },
+                    //             }
+                    //         }
+                    //     ]
+                    }
+                );
             }))
 
             const rooms = roomsAvailable.map((room: any, index) => {

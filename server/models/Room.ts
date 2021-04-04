@@ -6,7 +6,8 @@ const schema = new Schema({
     users: [{type: Types.ObjectId, ref: 'User', required: true}],
     author: {type: Types.ObjectId, ref: 'User', required: true},
     isDeleted: {type: Boolean, required: true},
-    name: {type: String, required: true}
+    name: {type: String, required: true},
+    lastUpdated: {type: Date}
 })
 
 module.exports = model('Room', schema)

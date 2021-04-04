@@ -8,6 +8,7 @@ import ChatParticipantItem from "../../../components/chat/Lists/ChatParticipantI
 import {ApplicationState} from "../../../store";
 import {createConversationAction, resetNewConversationUsers} from "../../../store/actions/newConversationActions";
 import Colors from "../../../constants/Colors";
+import {onGetRooms} from "../../../store/actions/chatActions";
 
 const CreateConversationReviewScreen = () => {
     const navigation = useNavigation()
@@ -37,6 +38,7 @@ const CreateConversationReviewScreen = () => {
 
     const onCreate = async () => {
         await dispatch(createConversationAction(name))
+        await dispatch(onGetRooms())
         await dispatch(resetNewConversationUsers())
         navigation.navigate('ChatList')
     }

@@ -108,19 +108,53 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
             }
 
         case "CHAT/PUSH_MESSAGE":
+            const foundRoom = state.rooms.find(room => room._id === action.payload.room?._id)
             return {
                 ...state,
                 messages: [action.payload, ...state.messages],
-                rooms: state.rooms.map(room => {
-                    if(room._id === action.payload.room?._id){
-                        return {
-                            ...room,
-                            
-                        }
-                    }
-                    return room
-                })
+                rooms: foundRoom ? [({
+                        ...foundRoom,
+                        lastMessage: action.payload,
+                    }), ...state.rooms.filter(room => room._id !== action.payload.room?._id)]
+                    :
+                    state.rooms
             }
+
+
+        case "CHAT/ON_PUSHER_MESSAGE":
+            const foundRoomPusher = state.rooms.find(room => room._id === action.payload?.room?._id)
+            if (action.payload.room?._id === state.selectedRoom)
+                return {
+                    ...state,
+                    messages: [action.payload, ...state.messages],
+                    rooms: [{
+                        ...(action.payload as MessageType & { room: RoomType }).room,
+                        lastMessage: {
+                            content: action.payload.content,
+                            room: action.payload.room,
+                            date: action.payload.date,
+                            _id: action.payload.date,
+                            author: action.payload.author
+                        }
+
+                    }, ...state.rooms.filter(room => room._id !== action.payload.room?._id)]
+                }
+            else
+                return {
+                    ...state,
+                    rooms: [{
+                        ...(action.payload as MessageType & { room: RoomType }).room,
+                        lastMessage: {
+                            content: action.payload.content,
+                            room: action.payload.room,
+                            date: action.payload.date,
+                            _id: action.payload.date,
+                            author: action.payload.author
+                        },
+                        nrUnread: foundRoomPusher?.nrUnread ? foundRoomPusher.nrUnread + 1 : 1,
+                        isRead: false,
+                    }, ...state.rooms.filter(room => room._id !== action.payload.room?._id)]
+                }
 
 
         default:

@@ -18,6 +18,7 @@ import {
     resetNewConversationUsers
 } from "../store/actions/newConversationActions";
 import ChatRoomScreen from "../screens/Chat/ChatRoom/ChatRoomScreen";
+import {onGetRooms} from "../store/actions/chatActions";
 
 
 const Stack = createStackNavigator<ChatStackParamList>()
@@ -34,6 +35,7 @@ const ChatStackNavigator = () => {
 
     const createConversation = async (navigation: any) => {
         await dispatch(createConversationAction())
+        await dispatch(onGetRooms())
         await dispatch(resetNewConversationUsers())
         navigation.navigate('ChatList')
     }

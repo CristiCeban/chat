@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {Alert} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import RootNavigator from "./RootNavigator";
 import {useDispatch, useSelector} from "react-redux";
@@ -9,6 +8,8 @@ import AuthStackNavigator from "./AuthStackNavigator";
 import AuthStorage from "../services/auth-storage";
 import {getProfile, setTokenAction} from "../store/actions/authActions";
 import Pusher from 'pusher-js/react-native';
+import {MessageType} from "../models/Message";
+import {onPusherMessage} from "../store/actions/chatActions";
 
 Pusher.logToConsole = true;
 
@@ -23,21 +24,19 @@ const Navigation = () => {
         dispatch(getProfile())
     }
 
-    useEffect(()=>{
-        if(token&&user._id){
+    useEffect(() => {
+        if (token && user?._id) {
             const pusher = new Pusher('e7b49de1db93e5713dc5', {
                 cluster: 'eu'
             });
             const channel = pusher.subscribe(`user.${user._id}`)
-            console.log(user._id)
-            channel.bind('message',(data:any) => {
-                Alert.alert('New Message',JSON.stringify(data))
+            channel.bind('message', (message: MessageType) => {
                 console.log('data received')
-                console.log(data)
+                dispatch(onPusherMessage(message))
             })
             return () => channel.unsubscribe()
         }
-    },[token,user._id])
+    }, [token, user?._id])
 
     useEffect(() => {
         (async () => {
@@ -55,7 +54,7 @@ const Navigation = () => {
     }, [token])
 
     useEffect(() => {
-        if (!token)
+        if (!token && !user?._id)
             setInitLoaded(true)
         if (token && user?._id)
             setInitLoaded(true)
@@ -67,7 +66,7 @@ const Navigation = () => {
             {initLoaded ? <NavigationContainer
                 ref={navigationRef}
             >
-                {token ? <RootNavigator/> : <AuthStackNavigator/>}
+                {token && user?._id ? <RootNavigator/> : <AuthStackNavigator/>}
             </NavigationContainer> : null}
         </>
     )
