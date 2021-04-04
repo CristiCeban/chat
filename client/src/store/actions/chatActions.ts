@@ -72,6 +72,11 @@ export interface IOnPusherMessage {
     payload: MessageType,
 }
 
+export interface IResetSelectedRoom {
+    readonly type: 'CHAT/RESET_SELECTED_ROOM',
+    payload: undefined
+}
+
 export type ChatActions =
     | IChatGetRooms
     | ISetLoadingRooms
@@ -83,6 +88,7 @@ export type ChatActions =
     | IPushMessage
     | IUpdateLastMessage
     | IOnPusherMessage
+    | IResetSelectedRoom
 
 export const onGetRooms = (params: any = {}, initialLoading = true) => {
     const param = {page: 1, limit: 10}
@@ -144,6 +150,12 @@ export const pushMessage = (message: MessageType) => {
 
 export const onPusherMessage = (message: MessageType) => {
     return async (dispatch: Dispatch<ChatActions>) => {
-        dispatch({type:'CHAT/ON_PUSHER_MESSAGE',payload:message})
+        dispatch({type: 'CHAT/ON_PUSHER_MESSAGE', payload: message})
+    }
+}
+
+export const resetSelectedRoom = () => {
+    return async (dispatch: Dispatch<ChatActions>) => {
+        dispatch({type: 'CHAT/RESET_SELECTED_ROOM', payload: undefined})
     }
 }

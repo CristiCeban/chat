@@ -9,7 +9,6 @@ import Colors from "../../../constants/Colors";
 import Room from "../../../components/chat/Lists/Room/Room";
 import {Ionicons} from "@expo/vector-icons";
 import {Input} from "native-base";
-import {onGetContacts} from "../../../store/actions/newConversationActions";
 
 const ChatListScreen = () => {
     const dispatch = useDispatch()
@@ -28,12 +27,23 @@ const ChatListScreen = () => {
     }, [])
 
     useEffect(() => {
-        dispatch(onGetRooms({search:search.toLowerCase()}))
+        dispatch(onGetRooms({search: search.toLowerCase()}))
     }, [search])
 
-    const handleRefresh = () => dispatch(onGetRooms())
+    const handleRefresh = () => dispatch(onGetRooms({search: search.toLowerCase()}))
 
     const renderItem = ({item}: any) => <Room room={item}/>
+
+    const loadMore = () => {
+        if (nextPageRooms <= lastPageRooms && !inProgressLazyRooms)
+            dispatch(onGetRooms({page: nextPageRooms, search: search.toLowerCase()}, false))
+    }
+
+    const renderFooter = () => {
+        if (inProgressLazyRooms)
+            return <ActivityIndicator size={'large'} style={styles.listFooter} color={Colors.red}/>
+        return null
+    }
 
     const onCreate = () => navigation.navigate('CreateConversation')
 
@@ -79,10 +89,12 @@ const ChatListScreen = () => {
                                 keyExtractor={item => (item._id)}
                                 onRefresh={handleRefresh}
                                 refreshing={inProgressRooms}
+                                onEndReached={loadMore}
+                                onEndReachedThreshold={0.5}
+                                ListFooterComponent={renderFooter}
                             />
                         </>
                     }
-
                 </>
             }
         </View>

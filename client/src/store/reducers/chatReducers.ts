@@ -1,6 +1,7 @@
 import {RoomType} from "../../models/roomType";
 import {ChatActions} from "../actions/chatActions";
 import {MessageType} from "../../models/Message";
+import Utils from "../../services/Utils";
 
 type chatState = {
     rooms: Array<RoomType>
@@ -101,7 +102,7 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
             } else {
                 return {
                     ...state,
-                    messages: [...state.messages, ...action.payload.data.messages],
+                    messages: (Utils.unique([...state.messages, ...action.payload.data.messages], '_id') as Array<MessageType>),
                     nextPageMessage: state.nextPageMessage + 1,
                     lastPageMessage: action.payload.data.totalPages
                 }
@@ -123,6 +124,7 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
 
         case "CHAT/ON_PUSHER_MESSAGE":
             const foundRoomPusher = state.rooms.find(room => room._id === action.payload?.room?._id)
+            console.log(foundRoomPusher?.nrUnread)
             if (action.payload.room?._id === state.selectedRoom)
                 return {
                     ...state,
@@ -136,7 +138,6 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
                             _id: action.payload.date,
                             author: action.payload.author
                         }
-
                     }, ...state.rooms.filter(room => room._id !== action.payload.room?._id)]
                 }
             else
@@ -152,9 +153,16 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
                             author: action.payload.author
                         },
                         nrUnread: foundRoomPusher?.nrUnread ? foundRoomPusher.nrUnread + 1 : 1,
+                        // nrUnread:1,
                         isRead: false,
                     }, ...state.rooms.filter(room => room._id !== action.payload.room?._id)]
                 }
+
+        case "CHAT/RESET_SELECTED_ROOM":
+            return {
+                ...state,
+                selectedRoom: undefined
+            }
 
 
         default:

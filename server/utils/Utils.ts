@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+
 const Fs = require('fs')
 const Path = require('path')
 const axios = require('axios')
@@ -6,10 +7,9 @@ import jwt from 'jsonwebtoken'
 import config from 'config'
 
 
-
 const Utils = {
-    downloadImage : async (url:string,imageName:string) => {
-        const path = Path.resolve(__dirname,'../images',imageName)
+    downloadImage: async (url: string, imageName: string) => {
+        const path = Path.resolve(__dirname, '../images', imageName)
         const writer = Fs.createWriteStream(path)
         try {
             const response = await axios({
@@ -24,24 +24,23 @@ const Utils = {
                 writer.on('finish', resolve)
                 writer.on('error', reject)
             })
-        }
-        catch (e) {
+        } catch (e) {
             console.warn(e)
         }
     },
-    createToken : (id:string) =>{
+    createToken: (id: string) => {
         return jwt.sign(
             {userId: id},
             config.get('jwtSecret'),
             {expiresIn: '24h'}
         )
     },
-    createPassword: async (password:string) =>{
+    createPassword: async (password: string) => {
         return bcrypt.hash(password, config.get('bcryptSalt'))
     },
-    checkPassword: async (password:string,bdPassword:string) => {
+    checkPassword: async (password: string, bdPassword: string) => {
         return bcrypt.compare(password, bdPassword)
-    }
+    },
 }
 
 export default Utils

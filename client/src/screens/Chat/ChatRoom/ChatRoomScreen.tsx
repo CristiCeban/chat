@@ -18,7 +18,7 @@ import {ApplicationState} from "../../../store";
 import RoomHeader from "../../../components/chat/Header/RoomHeader/RoomHeader";
 import {styles} from "./styles";
 import Colors from "../../../constants/Colors";
-import {getRoomMessages, pushMessage} from "../../../store/actions/chatActions";
+import {getRoomMessages, pushMessage, resetSelectedRoom} from "../../../store/actions/chatActions";
 import MessageItem from "../../../components/chat/Lists/MessageItem/MessageItem";
 import {MessageType} from "../../../models/Message";
 import Utils from "../../../services/Utils";
@@ -44,11 +44,14 @@ const ChatRoomScreen = ({route}: any) => {
     useEffect(() => {
         if (selectedRoom)
             dispatch(getRoomMessages(selectedRoom))
+        return () => {
+            dispatch(resetSelectedRoom())
+        }
     }, [selectedRoom])
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerTitle: (props: any) => <RoomHeader room={room}/>
+            headerTitle: () => <RoomHeader room={room}/>
         })
     }, [selectedRoom])
 
@@ -59,7 +62,6 @@ const ChatRoomScreen = ({route}: any) => {
                 _id: user._id,
             }
         })
-        socket.on('hello', (data: any) => console.log(data))
         setSocketClient(socket)
         return () => {
             socket.disconnect()
@@ -94,7 +96,7 @@ const ChatRoomScreen = ({route}: any) => {
         return null
     }
 
-    const renderItem = ({item}: any) => <MessageItem item={item}/>
+    const renderItem = ({item, index}: any) => <MessageItem item={item} index={index}/>
 
     return (
         <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>

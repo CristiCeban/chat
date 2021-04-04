@@ -19,6 +19,12 @@ export const styles = StyleSheet.create({
         margin:7,
         borderRadius: 30,
     },
+    messageContainerUserTime:{
+        backgroundColor: '#a3d0c2',
+        padding: 10,
+        margin:7,
+        borderRadius: 30,
+    },
     textUser: {
         maxWidth: width * 0.6,
         color:Colors.text1,
@@ -34,10 +40,19 @@ export const styles = StyleSheet.create({
         margin:7,
         borderRadius: 30,
     },
+    messageContainerContactTime: {
+        backgroundColor:'#a5d1f1',
+        padding: 10,
+        margin:7,
+        borderRadius: 30,
+    },
     flexRowStart: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    name: {
+        marginLeft:40,
     }
 })

@@ -53,8 +53,11 @@ export default {
     momentParseDate: (date: string, pattern: string = 'L') => {
         return moment.utc(date).format(pattern)
     },
-    momentParseDateCalendar: (date:string) => {
+    momentParseDateCalendar: (date: string) => {
         return moment(date).calendar()
+    },
+    unique: (array: Array<any>, propertyName: string) => {
+        return array.filter((e, i) => array.findIndex(a => a[propertyName] === e[propertyName]) === i);
     }
 
 }

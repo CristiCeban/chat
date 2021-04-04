@@ -49,4 +49,12 @@ export const styles = StyleSheet.create({
         fontSize: 14,
         flex: 1
     },
+    listFooter: {
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        marginHorizontal: 20,
+        marginVertical: 10,
+        borderRadius: 20,
+        height: 60
+    },
 })
