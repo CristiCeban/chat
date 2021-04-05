@@ -1,10 +1,14 @@
 import {Socket} from "socket.io";
+import {Expo} from 'expo-server-sdk';
+
+const Pusher = require("pusher");
+import {Types} from 'mongoose'
 
 const ConversationStatus = require('../models/ConversationStatus')
 const Room = require('../models/Room')
 const Message = require('../models/Message')
-const Pusher = require("pusher");
-import {Types} from 'mongoose'
+const PushToken = require('../models/PushToken')
+
 
 const pusher = new Pusher({
     appId: "1170414",
@@ -13,6 +17,8 @@ const pusher = new Pusher({
     cluster: "eu",
     useTLS: true
 });
+
+const expo = new Expo()
 
 export const MessageControl = (socket: Socket) => {
 
@@ -31,7 +37,9 @@ export const MessageControl = (socket: Socket) => {
         const roomSelected = await Room.findOne({_id: Types.ObjectId(room._id)})
         roomSelected.messages.push(message._id)
         roomSelected.lastUpdated = new Date()
-        await roomSelected.users.map(async (_user) => {
+        let messages = []
+
+        await Promise.all(roomSelected.users.map(async (_user) => {
             if (_user._id.equals(Types.ObjectId(author._id)))
                 return
 
@@ -44,6 +52,16 @@ export const MessageControl = (socket: Socket) => {
                 _id: message._id,
             })
 
+            const pushUserToken = await PushToken.findOne({user: _user._id})
+            if (pushUserToken && Expo.isExpoPushToken(pushUserToken.token)) {
+                messages.push({
+                    to: pushUserToken.token,
+                    sound: 'default',
+                    title: author.first_name + ' ' + author.last_name,
+                    body: content,
+                })
+            }
+
             //update conversation statuses related to this room+user
             await ConversationStatus.findOneAndUpdate({
                 user: _user._id,
@@ -52,8 +70,23 @@ export const MessageControl = (socket: Socket) => {
                 isRead: false,
                 $inc: {nrUnread: 1}
             })
-        })
+
+        }))
         await roomSelected.save()
+        let chunks = expo.chunkPushNotifications(messages);
+        let tickets = [];
+        await (async () => {
+            for (let chunk of chunks) {
+                try {
+                    let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+                    console.log(ticketChunk);
+                    tickets.push(...ticketChunk);
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        })();
+
     })
     console.log(`connection to ${process.pid}`);
     socket.emit('hello', {procces_pid: process.pid})

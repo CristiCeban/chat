@@ -4,7 +4,11 @@ import bcrypt from 'bcryptjs'
 import {check, validationResult} from 'express-validator'
 import axios from 'axios'
 import Utils from '../utils/Utils'
+import {Types} from "mongoose";
+
 const User = require('../models/User')
+const PushToken = require('../models/PushToken')
+const auth = require('../middlewares/auth.middleware')
 
 const router = Router()
 
@@ -91,7 +95,7 @@ router.post(
                 })
             }
 
-            const isMatch = await Utils.checkPassword(password,user.password)
+            const isMatch = await Utils.checkPassword(password, user.password)
 
             if (!isMatch) {
                 return res.status(400).json({
@@ -106,7 +110,7 @@ router.post(
             }
 
 
-            const newUserFound = await User.findOne({email},{password:0,"__v":0})
+            const newUserFound = await User.findOne({email}, {password: 0, "__v": 0})
 
             const token = Utils.createToken(newUserFound.id)
 
@@ -118,38 +122,75 @@ router.post(
     }
 )
 
+//  /api/auth/expo
+router.post(
+    '/expo',
+    [auth],
+    async (req, res) => {
+        try {
+            const {user} = req
+            const {expoToken} = req.body
+            if (await PushToken.findOne({user: Types.ObjectId(user.userId)})) {
+                await PushToken.findOneAndUpdate({user: Types.ObjectId(user.userId)}, {token: expoToken})
+            } else {
+                const pushToken = new PushToken({user: Types.ObjectId(user.userId), token: expoToken})
+                await pushToken.save()
+            }
+            res.json({success: 'TOKEN SAVED'})
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'})
+        }
+    }
+)
+
+//  /api/auth/logout
+router.get(
+    '/logout',
+    [auth],
+    async (req, res) => {
+        try {
+            const {user} = req
+            await PushToken.findOneAndUpdate({user: Types.ObjectId(user.userId)}, {token: ''})
+            res.json({success: 'TOKEN SAVED'})
+        } catch (e) {
+            console.log(e)
+            res.status(500).json({message: 'Server error'})
+        }
+    }
+)
+
 // /api/auth/facebook
 
 router.post(
     '/facebook',
-    async (req,res) => {
-        try{
+    async (req, res) => {
+        try {
             const {token} = req.body;
 
             const fetchedUser = await axios.get(`https://graph.facebook.com/v10.0/me?transport=cors&access_token=${token}&fields=id,first_name,last_name,email,picture.type(large)`)
             console.log(fetchedUser.data)
-            const {first_name,last_name,email,picture} = fetchedUser.data
-            const user = await User.findOne({email},{password:0,"__v":0})
+            const {first_name, last_name, email, picture} = fetchedUser.data
+            const user = await User.findOne({email}, {password: 0, "__v": 0})
 
             //create user
-            if(!user){
+            if (!user) {
                 //TODO add image download handler for user with image on facebook
 
                 // await Utils.downloadImage(picture.data.url,'asa2.jpg')
                 const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
-                const newUser = new User({email,first_name,last_name,password:hashedPassword})
+                const newUser = new User({email, first_name, last_name, password: hashedPassword})
                 await newUser.save()
-                const newUserFound = await User.findOne({email},{password:0,"__v":0})
+                const newUserFound = await User.findOne({email}, {password: 0, "__v": 0})
                 const token = Utils.createToken(newUserFound.id)
-                res.status(201).json({token,newUserFound})
+                res.status(201).json({token, newUserFound})
             }
             //if user exist
-            else{
-                const token =  Utils.createToken(user.id)
-                res.json({token,user})
+            else {
+                const token = Utils.createToken(user.id)
+                res.json({token, user})
             }
-        }
-        catch (e) {
+        } catch (e) {
             res.status(500).json({message: 'Server error'})
         }
     }
@@ -157,27 +198,31 @@ router.post(
 
 router.post(
     '/google',
-    async (req,res) => {
-        try{
-            const {token,user} = req.body;
-            const {email,familyName,givenName,photoUrl} = user
-            const isRegUser = await User.findOne({email},{password:0,"__v":0})
+    async (req, res) => {
+        try {
+            const {token, user} = req.body;
+            const {email, familyName, givenName, photoUrl} = user
+            const isRegUser = await User.findOne({email}, {password: 0, "__v": 0})
             // if user is not registered already
-            if(!isRegUser){
+            if (!isRegUser) {
                 const hashedPassword = await bcrypt.hash(email, config.get('bcryptSalt'))
-                const newUser = new User({email,first_name:givenName,last_name:familyName,password:hashedPassword})
+                const newUser = new User({
+                    email,
+                    first_name: givenName,
+                    last_name: familyName,
+                    password: hashedPassword
+                })
                 await newUser.save()
-                const newUserFound = await User.findOne({email},{password:0,"__v":0})
+                const newUserFound = await User.findOne({email}, {password: 0, "__v": 0})
                 const token = Utils.createToken(newUserFound.id)
-                res.status(201).json({token,newUserFound})
+                res.status(201).json({token, newUserFound})
             }
             // if user is already registered
-            else{
+            else {
                 const token = Utils.createToken(isRegUser.id)
-                res.json({token,isRegUser})
+                res.json({token, isRegUser})
             }
-        }
-        catch (e) {
+        } catch (e) {
             res.status(500).json({message: 'Server error'})
         }
     }

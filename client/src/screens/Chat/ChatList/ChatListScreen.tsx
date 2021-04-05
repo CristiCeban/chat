@@ -86,6 +86,7 @@ const ChatListScreen = () => {
                             < FlatList
                                 data={rooms}
                                 renderItem={renderItem}
+                                showsVerticalScrollIndicator={false}
                                 keyExtractor={item => (item._id)}
                                 onRefresh={handleRefresh}
                                 refreshing={inProgressRooms}

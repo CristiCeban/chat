@@ -1,17 +1,26 @@
 import React, {useEffect, useState} from "react";
 import {NavigationContainer} from '@react-navigation/native';
-import RootNavigator from "./RootNavigator";
 import {useDispatch, useSelector} from "react-redux";
+import * as Notifications from 'expo-notifications';
+import Pusher from 'pusher-js/react-native';
 import {ApplicationState} from "../store";
 import {navigationRef} from "../services/RootNavigation";
 import AuthStackNavigator from "./AuthStackNavigator";
 import AuthStorage from "../services/auth-storage";
+import RootNavigator from "./RootNavigator";
 import {getProfile, setTokenAction} from "../store/actions/authActions";
-import Pusher from 'pusher-js/react-native';
 import {MessageType} from "../models/Message";
 import {onPusherMessage} from "../store/actions/chatActions";
 
 Pusher.logToConsole = true;
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: false,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
 
 const Navigation = () => {
     const dispatch = useDispatch()

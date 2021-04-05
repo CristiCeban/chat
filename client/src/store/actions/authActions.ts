@@ -4,6 +4,7 @@ import ApiService from "../../services/api"
 import {User} from "../../models/user";
 import Config from "../../config/Config";
 import {ServerErrorType} from "../../models/errors";
+import {expoSubscribe} from "../../services/expo";
 
 export interface IAuthSetLoading {
     readonly type: 'AUTH/SET_LOADING',
@@ -40,12 +41,12 @@ export interface ISetRegister {
 
 export interface ISetErrorsRegister {
     readonly type: 'AUTH/SET_ERRORS_REGISTER',
-    payload : Array<ServerErrorType>
+    payload: Array<ServerErrorType>
 }
 
 export interface ISetErrorsLogin {
     readonly type: 'AUTH/SET_ERRORS_LOGIN',
-    payload :  Array<ServerErrorType>
+    payload: Array<ServerErrorType>
 }
 
 export type AuthAction =
@@ -66,11 +67,12 @@ export const authLoginAction = (body: any) => {
             const response = await ApiService.post('auth/login', body)
             //because of interceptors used in apiServices.
             const {token} = (response as any)
+            await expoSubscribe(token)
             await AuthStorage.setToken(token)
             dispatch({type: 'AUTH/ON_LOGIN', payload: (response as any)})
         } catch (e) {
             console.warn(e)
-            dispatch({type:'AUTH/SET_ERRORS_LOGIN',payload:e.response.data.errors})
+            dispatch({type: 'AUTH/SET_ERRORS_LOGIN', payload: e.response.data.errors})
 
         } finally {
             dispatch({type: 'AUTH/SET_LOADING', payload: false})
@@ -81,6 +83,7 @@ export const authLoginAction = (body: any) => {
 export const onLogoutAction = () => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try {
+            await ApiService.get('auth/logout')
             await AuthStorage.removeToken()
             dispatch({type: 'AUTH/LOGOUT', payload: undefined})
         } catch (e) {
@@ -105,6 +108,7 @@ export const onFacebookLogin = (facebook_token: string) => {
             dispatch({type: 'AUTH/SET_LOADING', payload: true})
             const response = await ApiService.post('auth/facebook', {token: facebook_token})
             const {token} = (response as any)
+            await expoSubscribe(token)
             await AuthStorage.setToken(token)
             dispatch({type: 'AUTH/ON_LOGIN', payload: (response as any)})
         } catch (e) {
@@ -122,6 +126,7 @@ export const onGoogleLogin = (google_token: string, user: Object) => {
             dispatch({type: 'AUTH/SET_LOADING', payload: true})
             const response = await ApiService.post('auth/google', {token: google_token, user})
             const {token} = (response as any)
+            await expoSubscribe(token)
             await AuthStorage.setToken(token)
             dispatch({type: 'AUTH/ON_LOGIN', payload: (response as any)})
         } catch (e) {
@@ -186,7 +191,7 @@ export const onEditProfile = (values: any) => {
     }
 }
 
-export const onRegisterAction = (body: any,navigation : any) => {
+export const onRegisterAction = (body: any, navigation: any) => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try {
             dispatch({type: 'AUTH/SET_REGISTER', payload: true})
@@ -194,7 +199,7 @@ export const onRegisterAction = (body: any,navigation : any) => {
             navigation.goBack()
         } catch (e) {
             console.warn(e)
-            dispatch({type:'AUTH/SET_ERRORS_REGISTER',payload:e.response.data.errors})
+            dispatch({type: 'AUTH/SET_ERRORS_REGISTER', payload: e.response.data.errors})
         } finally {
             dispatch({type: 'AUTH/SET_REGISTER', payload: false})
         }

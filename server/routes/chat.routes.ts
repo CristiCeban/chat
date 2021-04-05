@@ -11,10 +11,10 @@ const router = Router()
 // /api/chat/room/create
 router.post(
     '/room/create',
-    auth,
+    [auth],
     async (req, res) => {
         try {
-            const {user} = (req as any)
+            const {user} = req
             const {users, name} = req.body
             const usersDB = [...users.map(user => Types.ObjectId(user)), Types.ObjectId(user.userId)]
 
