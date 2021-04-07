@@ -26,12 +26,12 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 5,
         fontWeight: 'bold',
-        color:'black'
+        color: 'black'
     },
-    uncheck:{
+    uncheck: {
         fontSize: 16,
         marginRight: 5,
         fontWeight: 'bold',
-        color:Colors.grey1
+        color: Colors.grey1
     }
 })

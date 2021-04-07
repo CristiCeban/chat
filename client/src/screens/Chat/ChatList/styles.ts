@@ -6,8 +6,8 @@ export const styles = StyleSheet.create({
         display: 'flex',
         backgroundColor: Colors.white2,
         flex: 1,
-        paddingHorizontal:20,
-        paddingTop:20,
+        paddingHorizontal: 20,
+        paddingTop: 20,
     },
     center: {
         display: 'flex',
@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     containerInfo: {
-        borderBottomWidth:1,
-        borderColor:Colors.brown1,
+        borderBottomWidth: 1,
+        borderColor: Colors.brown1,
     },
     containerCreate: {
         display: 'flex',

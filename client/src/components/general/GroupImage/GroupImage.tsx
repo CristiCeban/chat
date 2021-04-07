@@ -1,7 +1,6 @@
 import React from "react";
 import {StyleSheet, View} from "react-native";
 import {User} from "../../../models/user";
-import Avatar from "../Avatar/Avatar";
 import AvatarGroupImage from "../AvatarGroupImage/AvatarGroupImage";
 
 

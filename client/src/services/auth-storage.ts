@@ -1,7 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage";
 import Config from "../config/Config";
 
-
 export default class AuthStorage {
     static async getToken() {
         const bodyString = await AsyncStorage.getItem(Config.tokenVariableName);

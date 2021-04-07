@@ -1,5 +1,5 @@
-import React, {useState, useLayoutEffect} from "react";
-import {View, FlatList, TouchableOpacity, Text, ActivityIndicator} from "react-native";
+import React, {useLayoutEffect, useState} from "react";
+import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
 import {styles} from "./styles";
 import {Input} from "native-base";
 import {useDispatch, useSelector} from "react-redux";

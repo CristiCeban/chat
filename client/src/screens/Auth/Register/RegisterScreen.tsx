@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {View, Text, TextInput, ActivityIndicator, TouchableOpacity} from "react-native";
+import {ActivityIndicator, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {Formik} from "formik";
 import * as yup from 'yup';
 import {useDispatch, useSelector} from "react-redux";
@@ -8,7 +8,6 @@ import {styles} from "./styles";
 import {onRegisterAction} from "../../../store/actions/authActions";
 import Colors from "../../../constants/Colors";
 import {ApplicationState} from "../../../store";
-
 
 const validationSchema = yup.object().shape({
     email: yup.string().required('Please enter your email')
@@ -27,7 +26,7 @@ const RegisterScreen = () => {
     const dispatch = useDispatch()
     const navigation = useNavigation()
     const formikRef = useRef<any>(null)
-    const {isRegistering,registerErrors} = useSelector((state: ApplicationState) => state.authReducer)
+    const {isRegistering, registerErrors} = useSelector((state: ApplicationState) => state.authReducer)
 
     const initValues = {
         email: '',
@@ -39,7 +38,7 @@ const RegisterScreen = () => {
 
     const onSubmit = async (values: any) => {
         console.log(values)
-        await dispatch(onRegisterAction(values,navigation))
+        await dispatch(onRegisterAction(values, navigation))
     }
     return (
         <View style={styles.container}>
@@ -77,8 +76,9 @@ const RegisterScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {registerErrors.length && registerErrors.find((error) => error.param==='email') ?
-                                <Text style={styles.textError}>{registerErrors.find((error) => error.param==='email')?.msg || ''}</Text> : null}
+                            {registerErrors.length && registerErrors.find((error) => error.param === 'email') ?
+                                <Text
+                                    style={styles.textError}>{registerErrors.find((error) => error.param === 'email')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>
@@ -99,8 +99,9 @@ const RegisterScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {registerErrors.length && registerErrors.find((error) => error.param==='first_name') ?
-                                <Text style={styles.textError}>{registerErrors.find((error) => error.param==='first_name')?.msg || ''}</Text> : null}
+                            {registerErrors.length && registerErrors.find((error) => error.param === 'first_name') ?
+                                <Text
+                                    style={styles.textError}>{registerErrors.find((error) => error.param === 'first_name')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>
@@ -121,8 +122,9 @@ const RegisterScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {registerErrors.length && registerErrors.find((error) => error.param==='last_name') ?
-                                <Text style={styles.textError}>{registerErrors.find((error) => error.param==='last_name')?.msg || ''}</Text> : null}
+                            {registerErrors.length && registerErrors.find((error) => error.param === 'last_name') ?
+                                <Text
+                                    style={styles.textError}>{registerErrors.find((error) => error.param === 'last_name')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>
@@ -145,8 +147,9 @@ const RegisterScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {registerErrors.length && registerErrors.find((error) => error.param==='password') ?
-                                <Text style={styles.textError}>{registerErrors.find((error) => error.param==='password')?.msg || ''}</Text> : null}
+                            {registerErrors.length && registerErrors.find((error) => error.param === 'password') ?
+                                <Text
+                                    style={styles.textError}>{registerErrors.find((error) => error.param === 'password')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>

@@ -3,7 +3,6 @@ import ApiService from '../../services/api'
 import {RoomType} from "../../models/roomType";
 import {MessageType} from "../../models/Message";
 
-
 type RoomData = {
     rooms: Array<RoomType>,
     totalPages: number,

@@ -24,7 +24,7 @@ const AvatarGroupImage = ({fontSize, height, profile, width, containerStyle}: Av
     }
 
     return (
-        <View style={{width, height, ...styles.avatarContainer, backgroundColor: profileColor,...containerStyle}}>
+        <View style={{width, height, ...styles.avatarContainer, backgroundColor: profileColor, ...containerStyle}}>
             {profile.image ? renderAvatarImage() : renderLetters()}
         </View>
     )

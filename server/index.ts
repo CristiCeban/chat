@@ -14,9 +14,7 @@ const apiPort = config.get('apiPort') || 3000
 
 const startWorker = async () => {
     console.log(`Worker ${process.pid} started`);
-
     try {
-
         await mongoose.connect(config.get('mongoUrl'),{
             useNewUrlParser: true,
             useUnifiedTopology: true,
@@ -24,10 +22,6 @@ const startWorker = async () => {
         })
 
         const app = express()
-
-        // pusher.trigger("my-channel", "my-event", {
-        //     message: "hello world"
-        // });
         app.use(express.json({extended: true}))
         app.use(cors())
 

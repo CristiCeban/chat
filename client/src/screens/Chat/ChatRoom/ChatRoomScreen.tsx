@@ -23,7 +23,6 @@ import MessageItem from "../../../components/chat/Lists/MessageItem/MessageItem"
 import {MessageType} from "../../../models/Message";
 import Utils from "../../../services/Utils";
 
-
 const ChatRoomScreen = ({route}: any) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
@@ -75,7 +74,7 @@ const ChatRoomScreen = ({route}: any) => {
     }
 
     const onSendMessage = async () => {
-        if (inputRef) {
+        if (inputRef && inputText) {
             const message: MessageType = {
                 author: user,
                 content: inputText,

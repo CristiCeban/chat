@@ -3,22 +3,6 @@ import {Types} from "mongoose";
 const User = require('../models/User')
 const auth = require('../middlewares/auth.middleware')
 
-//THIS PART IS FOR UPLOADING FILES TO SERVER,BUT I AM USING CDN INSTEAD OF THIS,So...
-//
-// import path from "path";
-// const parseFormData = require('../middlewares/parseFormData.middleware')
-// const multer = require('multer');
-
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, 'images/')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, Date.now() + path.extname(file.originalname)) //Appending extension
-//     }
-// });
-// const upload = multer({storage: storage,limits:{fileSize: 10 * 1024 * 1024}})
-// const upload = multer({dest : 'images/'})
 const router = Router()
 
 router.get(

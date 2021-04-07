@@ -6,44 +6,42 @@ export const styles = StyleSheet.create({
         display: 'flex',
         flex: 1,
         padding: 10,
-        paddingTop:5,
-        backgroundColor:Colors.grey3,
+        paddingTop: 5,
+        backgroundColor: Colors.grey3,
     },
-    containerData:{
-        display:'flex',
-        flex:1,
+    containerData: {
+        display: 'flex',
+        flex: 1,
     },
-    list:{
-        display:'flex',
-        flex:1,
+    list: {
+        display: 'flex',
+        flex: 1,
     },
     footer: {
         display: 'flex',
         justifyContent: 'flex-end',
-        paddingTop:10,
+        paddingTop: 10,
     },
     flexRow: {
         display: 'flex',
-        flexDirection:'row',
-        alignItems:'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     containerTextInput: {
         borderRadius: 20,
         paddingHorizontal: 10,
         paddingVertical: 5,
-        flex:1,
-        // backgroundColor: Colors.lightBlue2,
-        // backgroundColor:'#86c3d7',
-        backgroundColor:'#96c3f4'
+        flex: 1,
+        backgroundColor: '#96c3f4'
     },
-    emoji:{
-        fontSize:20,
+    emoji: {
+        fontSize: 20,
     },
-    emojiContainer:{
-        marginRight:5,
+    emojiContainer: {
+        marginRight: 5,
     },
-    containerSend:{
-        marginLeft:5,
+    containerSend: {
+        marginLeft: 5,
     },
     center: {
         display: 'flex',

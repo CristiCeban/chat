@@ -121,7 +121,6 @@ const ChatReducer = (state: chatState = initialState, action: ChatActions) => {
                     state.rooms
             }
 
-
         case "CHAT/ON_PUSHER_MESSAGE":
             const foundRoomPusher = state.rooms.find(room => room._id === action.payload?.room?._id)
             console.log(foundRoomPusher?.nrUnread)

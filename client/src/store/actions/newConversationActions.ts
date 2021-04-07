@@ -104,7 +104,7 @@ export const createConversationAction = (name?: string) => {
 
 export const resetNewConversationUsers = () => {
     return async (dispatch: Dispatch<NewConversationActions>) => {
-        dispatch({type:'NEW_CONVERSATION/RESET_NEW_CONVERSATION_USERS',payload:undefined})
+        dispatch({type: 'NEW_CONVERSATION/RESET_NEW_CONVERSATION_USERS', payload: undefined})
     }
 }
 

@@ -1,6 +1,5 @@
 import {Router} from "express"
 import {Types} from "mongoose";
-
 const Room = require('../models/Room')
 const Message = require('../models/Message')
 const ConversationStatus = require('../models/ConversationStatus')
@@ -51,13 +50,6 @@ router.post(
     }
 )
 
-// /api/chat/room/delete/id
-router.get(
-    '/room/delete/:id',
-    async (req, res) => {
-
-    })
-
 // /api/chat/room/rooms
 router.get(
     '/room/rooms',
@@ -68,49 +60,7 @@ router.get(
             const {user} = req
             const roomsAvailable = await Room.find({
                 users: Types.ObjectId(user.userId),
-                // name: {$regex: search, $options: 'i'}
-
-                $or: [
-                    {name: {$regex: search, $options: 'i'}},
-                    // {
-                    //     users: {
-                    //         $elemMatch: {
-                    //             first_name:
-                    //                 {
-                    //                     $regex: search,
-                    //                     $options: 'i',
-                    //                     // _id: {$ne: Types.ObjectId(user.userId)}
-                    //                 }
-                    //         },
-                    //
-                    //
-                    //         // $elemMatch: {
-                    //         //     first_name: search,
-                    //         // }
-                    //     }
-                    // }
-                    // {
-                    //     users: {
-                    //         first_name:
-                    //             {
-                    //                 $regex: search,
-                    //                 $options: 'i',
-                    //                 // _id: {$ne: Types.ObjectId(user.userId)}
-                    //             }
-                    //     }
-                    // },
-                    //     {
-                    //         users:
-                    //             {
-                    //                 last_name:
-                    //                     {
-                    //                         $regex: search,
-                    //                         $options: 'i',
-                    //                         // _id: {$ne: Types.ObjectId(user.userId)}
-                    //                     }
-                    //             }
-                    //     }
-                ],
+                name: {$regex: search, $options: 'i'}
             }, {"__v": 0})
                 .populate({
                     path: 'messages',
@@ -141,22 +91,8 @@ router.get(
 
             const conversationsStatuses = await Promise.all(roomsAvailable.map(async (room) => {
                 return await ConversationStatus.findOne({
-                        user: Types.ObjectId(user.userId), room: room._id,
-                    //     $or: [
-                    //         {name: {$regex: search, $options: 'i'}},
-                    //         {
-                    //             users: {
-                    //                 $elemMatch: {
-                    //                     first_name:
-                    //                         {
-                    //                             $regex: search,
-                    //                             $options: 'i',
-                    //                             // _id: {$ne: Types.ObjectId(user.userId)}
-                    //                         }
-                    //                 },
-                    //             }
-                    //         }
-                    //     ]
+                        user: Types.ObjectId(user.userId),
+                        room: room._id,
                     }
                 );
             }))
@@ -187,25 +123,6 @@ router.get(
         } catch (e) {
             res.status(500).json({message: 'Server error'})
         }
-
-    })
-
-// /api/chat/room/:id
-router.get(
-    '/room/:id',
-    [auth],
-    async (req, res) => {
-        const {page = 1, limit = 10, search = ''} = req.query
-        const id = req.params
-        const {user} = req
-        // const room = await Room.findOne({users:})
-
-    })
-
-// /api/chat/message/:id
-router.get(
-    '/message/:id',
-    async (req, res) => {
 
     })
 

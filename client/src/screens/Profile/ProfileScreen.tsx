@@ -1,7 +1,6 @@
 import React, {useRef} from "react";
-import {View, Text, TouchableOpacity, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform} from "react-native";
+import {ActivityIndicator, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import * as ImageManipulator from "expo-image-manipulator";
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from "formik";
 import * as yup from 'yup';
@@ -33,7 +32,6 @@ const ProfileScreen = () => {
         last_name
     }
 
-
     const openImagePickerAsync = async (setImage: any) => {
         let permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -50,13 +48,7 @@ const ProfileScreen = () => {
         );
 
         if (!pickerResult.cancelled) {
-            // const file = await ImageManipulator.manipulateAsync(
-            //     pickerResult.uri,
-            //     [{resize: {width: 2000}}],
-            //     {compress: 1, format: ImageManipulator.SaveFormat.JPEG}
-            // );
             setImage('thumbnail', pickerResult);
-            // formikRef.current.handleSubmit()
         }
     }
 

@@ -59,7 +59,6 @@ export type AuthAction =
     | ISetErrorsRegister
     | ISetErrorsLogin
 
-
 export const authLoginAction = (body: any) => {
     return async (dispatch: Dispatch<AuthAction>) => {
         try {

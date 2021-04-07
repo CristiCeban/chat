@@ -42,7 +42,7 @@ const MessageItem = ({item, index}: MessageItemParams) => {
                         <View style={isDisplayingTime ? styles.messageContainerUserTime : styles.messageContainerUser}>
                             <Text style={styles.textUser}>{content}</Text>
                         </View>
-                        <View style={{width:10}}/>
+                        <View style={{width: 10}}/>
                     </View>
                 </TouchableOpacity>
                 :

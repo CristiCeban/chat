@@ -59,7 +59,6 @@ const errorHandler = (err: any) => {
             store.dispatch({type: "AUTH/LOGOUT", payload: undefined})
         });
     }
-
     return Promise.reject(err);
 };
 

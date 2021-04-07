@@ -5,7 +5,6 @@ import {AuthStackParamList} from "../../types";
 import Colors from "../constants/Colors";
 import RegisterScreen from "../screens/Auth/Register/RegisterScreen";
 
-
 const Stack = createStackNavigator<AuthStackParamList>();
 
 const AuthStackNavigator = () => {
@@ -30,7 +29,6 @@ const AuthStackNavigator = () => {
                 name={'Register'}
                 component={RegisterScreen}
             />
-
         </Stack.Navigator>
     )
 }

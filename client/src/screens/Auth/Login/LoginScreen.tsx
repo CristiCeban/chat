@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import {View, Text, ActivityIndicator, TextInput, TouchableOpacity} from "react-native";
+import {ActivityIndicator, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigation} from '@react-navigation/native';
 import {Formik} from "formik";
@@ -12,7 +12,6 @@ import {authLoginAction, onFacebookLogin, onGoogleLogin} from "../../../store/ac
 import {ApplicationState} from "../../../store";
 import * as Google from 'expo-google-app-auth';
 
-
 const validationSchema = yup.object().shape({
     email: yup.string().required('Please enter your email')
         .min(4, 'Email should have at least 4 characters')
@@ -24,7 +23,7 @@ const validationSchema = yup.object().shape({
 const LoginScreen = () => {
     const dispatch = useDispatch()
     const navigation = useNavigation()
-    const {isLoading,loginErrors} = useSelector((state: ApplicationState) => state.authReducer)
+    const {isLoading, loginErrors} = useSelector((state: ApplicationState) => state.authReducer)
     const formikRef = useRef<any>(null)
 
     const submit = async (values: any) => {
@@ -105,8 +104,9 @@ const LoginScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {loginErrors.length && loginErrors.find((error) => error.param==='email') ?
-                                <Text style={styles.textError}>{loginErrors.find((error) => error.param==='email')?.msg || ''}</Text> : null}
+                            {loginErrors.length && loginErrors.find((error) => error.param === 'email') ?
+                                <Text
+                                    style={styles.textError}>{loginErrors.find((error) => error.param === 'email')?.msg || ''}</Text> : null}
                         </View>
 
                         <View style={styles.textContainer}>
@@ -129,8 +129,9 @@ const LoginScreen = () => {
                         </View>
 
                         <View style={styles.center}>
-                            {loginErrors.length && loginErrors.find((error) => error.param==='password') ?
-                                <Text style={styles.textError}>{loginErrors.find((error) => error.param==='password')?.msg || ''}</Text> : null}
+                            {loginErrors.length && loginErrors.find((error) => error.param === 'password') ?
+                                <Text
+                                    style={styles.textError}>{loginErrors.find((error) => error.param === 'password')?.msg || ''}</Text> : null}
                         </View>
 
                         <TouchableOpacity style={styles.buttonContainer} disabled={isLoading}
@@ -170,7 +171,7 @@ const LoginScreen = () => {
                             }
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.register} onPress={()=>navigation.navigate('Register')}>
+                        <TouchableOpacity style={styles.register} onPress={() => navigation.navigate('Register')}>
                             <Text>Don't have an account yet? Register!</Text>
                         </TouchableOpacity>
                     </View>

@@ -34,8 +34,8 @@ export const styles = StyleSheet.create({
         color: Colors.brown2
     },
     messageDetailsUnread: {
-        fontSize:12,
-        color:Colors.coffeeLight,
+        fontSize: 12,
+        color: Colors.coffeeLight,
     },
     flexBetween: {
         display: 'flex',

@@ -1,9 +1,8 @@
 import React from "react";
 import {createStackNavigator} from "@react-navigation/stack";
-import {FontAwesome5} from '@expo/vector-icons';
+import {FontAwesome5, Ionicons} from '@expo/vector-icons';
 import {ActivityIndicator, StyleSheet, Text, TouchableOpacity} from "react-native";
 import {useDispatch, useSelector} from "react-redux";
-import {Ionicons} from '@expo/vector-icons';
 import Colors from "../constants/Colors";
 import ChatListScreen from "../screens/Chat/ChatList/ChatListScreen";
 import Avatar from "../components/general/Avatar/Avatar";
@@ -13,13 +12,9 @@ import ProfileScreen from "../screens/Profile/ProfileScreen";
 import {onLogoutAction} from "../store/actions/authActions";
 import CreateConversationScreen from "../screens/Chat/CreateConversation/CreateConversationScreen";
 import CreateConversationReviewScreen from "../screens/Chat/CreateConversationReview/CreateConversationReviewScreen";
-import {
-    createConversationAction,
-    resetNewConversationUsers
-} from "../store/actions/newConversationActions";
+import {createConversationAction, resetNewConversationUsers} from "../store/actions/newConversationActions";
 import ChatRoomScreen from "../screens/Chat/ChatRoom/ChatRoomScreen";
 import {onGetRooms} from "../store/actions/chatActions";
-
 
 const Stack = createStackNavigator<ChatStackParamList>()
 
@@ -49,7 +44,6 @@ const ChatStackNavigator = () => {
             navigation.navigate('CreateConversationReview')
         }
     }
-
 
     return (
         <Stack.Navigator

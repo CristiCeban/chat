@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {View, Text, TouchableOpacity, ActivityIndicator, FlatList} from "react-native";
+import {ActivityIndicator, FlatList, Text, TouchableOpacity, View} from "react-native";
 import {Feather, Ionicons} from "@expo/vector-icons";
 import {Input} from "native-base";
 import {useDispatch, useSelector} from "react-redux";
@@ -34,7 +34,6 @@ const CreateConversationScreen = () => {
     const handleRefresh = () => {
         dispatch(onGetContacts({search}))
     }
-
 
     const loadMore = () => {
         if (nextPageContacts <= lastPageContacts && !inProgressLazyAllContacts)
@@ -74,7 +73,6 @@ const CreateConversationScreen = () => {
             </TouchableOpacity>
         )
     }
-
 
     return (
         <View style={styles.container}>

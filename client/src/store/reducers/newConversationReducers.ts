@@ -66,12 +66,11 @@ const NewConversationReducer = (state: newConversationState = initialState, acti
         case "NEW_CONVERSATION/RESET_NEW_CONVERSATION_USERS":
             return {
                 ...state,
-                newUsersToCreateConversation : [],
+                newUsersToCreateConversation: [],
             }
         default:
             return state
     }
-
 }
 
 export {NewConversationReducer}
